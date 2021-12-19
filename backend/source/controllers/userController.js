@@ -170,4 +170,7 @@ const updateUserById = async (req, res, next) => {
         res.status(404).json("Not update")
     }
 }
+
+// get all order of user
+
 export { loginUser, profileUser, resgisterUser, updateProfileUser, getAllUsers, getUserById }
