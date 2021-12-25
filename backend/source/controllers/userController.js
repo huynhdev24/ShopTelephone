@@ -148,14 +148,14 @@ const getUserById = async (req, res, next) => {
 // @desc    update user by id
 // @route   PUT /api/user/:id
 // @access  private admin
-const updateUserById = async (req, res, next) => {
+const acceptAdmin = async (req, res, next) => {
     try {
         var id = req.params.id
-        var { isAdmin } = req.body
+        
         var user = await User.findById(id)
 
         if (user) {
-            var userAfterUpdate = await User.findOneAndUpdate({ _id: id }, { isAdmin: isAdmin }, { new: true })
+            var userAfterUpdate = await User.findOneAndUpdate({ _id: id }, { isAdmin: true }, { new: true })
             res.status(200).json({
                 _id: userAfterUpdate._id,
                 name: userAfterUpdate.name,
@@ -173,4 +173,6 @@ const updateUserById = async (req, res, next) => {
 
 // get all order of user
 
-export { loginUser, profileUser, resgisterUser, updateProfileUser, getAllUsers, getUserById }
+// search uer by name
+
+export { loginUser, profileUser, resgisterUser, updateProfileUser, getAllUsers, getUserById, acceptAdmin }

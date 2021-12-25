@@ -20,9 +20,9 @@ const getProductById = async (req, res, next) => {
 const getProduct = async (req, res, next) => {
     try {
         var allProduct = await Product.find({})
-        res.json(allProduct)
+        res.status(200).json(allProduct)
     } catch (error) {
-        res.status(500).json("NOT FOUND")
+        res.status(404).json("NOT FOUND")
     }
 
 }
@@ -42,7 +42,7 @@ const deleteProductById = async (req, res, next) => {
         }
 
     } catch (error) {
-        res.status(404).json("NOT DELETE")
+        res.status(500).json("NOT DELETE")
     }
 }
 
