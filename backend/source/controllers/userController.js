@@ -1,4 +1,5 @@
 import User from '../models/userModel.js'
+import Order from '../models/orderModel.js'
 import { generateToken } from '../utils/generateToken.js'
 import bcrypt from 'bcryptjs'
 
@@ -171,8 +172,24 @@ const acceptAdmin = async (req, res, next) => {
     }
 }
 
-// get all order of user
-
+// 
+// @desc    get all order of user
+// @route   GET /api/user/order/:id
+// @access  private admin
+const getAllOrderOfUser = async (req, res, next) => {
+    try {
+        var id = req.params.id
+        var orderOfUser = await Order.find({user: id})
+        if (orderOfUser) {
+            res.status(200).json(orderOfUser)
+        } else {
+            res.status(400).json("NOT FOUND")
+        }
+       
+    } catch (error) {
+        res.status(400).json("NOT FOUND")
+    }
+}
 // search uer by name
 
-export { loginUser, profileUser, resgisterUser, updateProfileUser, getAllUsers, getUserById, acceptAdmin }
+export { loginUser, profileUser, resgisterUser, updateProfileUser, getAllUsers, getUserById, acceptAdmin, getAllOrderOfUser }
