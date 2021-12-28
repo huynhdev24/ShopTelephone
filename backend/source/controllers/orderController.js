@@ -1,8 +1,9 @@
 import Order from '../models/orderModel.js'
-
+import { validationResult } from 'express-validator';
 // @desc Order product
 // @route POST /api/order
 // @access private
+// test rồi
 const orderProduct = async (req, res, next) => {
     try {
         var user = req.user._id
@@ -28,6 +29,7 @@ const orderProduct = async (req, res, next) => {
 // @desc Get order by id
 // @route GET /api/order/:id
 // @access private
+// test rồi
 const getOrderById = async (req, res, next) => {
     try {
         var id = req.params.id
@@ -46,6 +48,7 @@ const getOrderById = async (req, res, next) => {
 // @desc Get logged in user orders
 // @route GET /api/orders/myorders
 // @access private
+// test rồi
 const getMyOrder =  async (req, res, next) => {
     try {
         console.log(req.user._id)
@@ -60,6 +63,7 @@ const getMyOrder =  async (req, res, next) => {
 // @desc Get all orders by admin
 // @route GET /api/orders
 // @access private admin
+// test rồi
 const getOrder =  async (req, res, next) => {
     try {
         var allOrders = await Order.find()
@@ -76,6 +80,7 @@ const getOrder =  async (req, res, next) => {
 // @desc Update order to delivered
 // @route PUT /api/order/:id/deliver
 // @access private admin
+// test rồi
 const updateOrder = async (req, res, next) => {
     try {
         var idOrder = req.params.id

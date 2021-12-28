@@ -6,10 +6,9 @@ const checkLogin = async (req, res, next) => {
         if (req.headers.authorization && req.headers.authorization.startsWith('Bear')) {
             token = req.headers.authorization.split(' ')[1]
             var tokenVerify = jwt.verify(token, process.env.JSONWEBTOKEN);
-            // console.log(tokenVerify)
-            // console.log(id)
+           
             var user = await User.findById({ _id: tokenVerify.id }).select('-password')
-            // console.log(user)
+            
             if (user) {
                 req.user = user
                 next()

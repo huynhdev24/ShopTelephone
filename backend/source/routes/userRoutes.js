@@ -5,14 +5,16 @@ const router = express.Router()
 
 router.post('/login', loginUser)
 router.get('/', checkLogin, checkAdmin, getAllUsers)
-router.get('/:id', checkLogin, checkAdmin, getUserById)
+
 router.post('/resgister', resgisterUser)
 router.get('/profile', checkLogin, profileUser)
 
 router.put('/profile', checkLogin, updateProfileUser)
-router.put('/api/user/:id', checkLogin, checkAdmin, acceptAdmin)
-router.get('/order/:id', checkLogin, checkAdmin, getAllOrderOfUser)
 
-// router.get('/', getProduct)
+router.get('/order/:id', checkLogin, checkAdmin, getAllOrderOfUser)
+router.get('/:id', checkLogin, checkAdmin, getUserById)
+router.put('/:id', checkLogin, checkAdmin, acceptAdmin)
+
+
 
 export default router

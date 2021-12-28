@@ -1,13 +1,16 @@
 import User from '../models/userModel.js'
 import Order from '../models/orderModel.js'
 import { generateToken } from '../utils/generateToken.js'
+import { validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs'
 
 // @desc    Auth user & get token
 // @route   POST /api/user/login
 // @access  Public
+// test rồi
 const loginUser = async (req, res, next) => {
     try {
+        // thieu validion
         var { email, password } = req.body
 
         if (email) {
@@ -43,6 +46,7 @@ const loginUser = async (req, res, next) => {
 // @desc    resgis new user
 // @route   POST /api/user/resgister
 // @access  public
+// test rồi
 const resgisterUser = async (req, res, next) => {
     try {
         var { name, password, email } = req.body
@@ -80,7 +84,9 @@ const resgisterUser = async (req, res, next) => {
 // @desc    get profile user
 // @route   GET /api/user/profile
 // @access  private
+// test rồi
 const profileUser = (req, res, next) => {
+   
 
     if (req.user) {
         res.status(200).json(req.user)
@@ -94,6 +100,7 @@ const profileUser = (req, res, next) => {
 // @access  private
 const updateProfileUser = async (req, res, next) => {
     try {
+        // thieu validation
         var { name, email, password } = req.body
         var idUserUpdate = req.user._id
 
@@ -114,13 +121,37 @@ const updateProfileUser = async (req, res, next) => {
 
 
 // @desc    get all users
-// @route   GET /api/user
+// @route   GET /api/user?name=name&pageNumber=1
 // @access  private admin
+// test rồi
 const getAllUsers = async (req, res, next) => {
     try {
-        var getAllUsers = await User.find({})
-        if (getAllUsers) {
-            res.status(200).json(getAllUsers)
+        // thieu validation
+        var nameUser = req.query.name
+            ? {
+                'name': {
+                    $regex: req.query.name,
+                    $options: 'i',
+                }
+
+            }
+            : {}
+
+
+        var pageNumber = parseInt(req.query.pageNumber) || 1
+        const PAGE_SIZE = 2
+        if (pageNumber < 1) {
+            pageNumber = 1
+        }
+
+        var count = await User.count({ ...nameUser })
+        var getUsers = await User.find({ ...nameUser })
+            .limit(PAGE_SIZE)
+            .skip((pageNumber - 1) * PAGE_SIZE)
+
+        if (getUsers) {
+            res.status(200).json({ getUsers, pageNumber, totalPage: Math.ceil(count / PAGE_SIZE) })
+
         } else {
             res.status(404).json("NOT FOUND")
         }
@@ -132,6 +163,7 @@ const getAllUsers = async (req, res, next) => {
 // @desc    get user by id
 // @route   GET /api/user/:id
 // @access  private admin
+// test rồi
 const getUserById = async (req, res, next) => {
     try {
         var id = req.params.id
@@ -146,13 +178,14 @@ const getUserById = async (req, res, next) => {
     }
 }
 
-// @desc    update user by id
+// @desc    accept user to admin
 // @route   PUT /api/user/:id
 // @access  private admin
+// test rồi
 const acceptAdmin = async (req, res, next) => {
     try {
         var id = req.params.id
-        
+
         var user = await User.findById(id)
 
         if (user) {
@@ -176,20 +209,21 @@ const acceptAdmin = async (req, res, next) => {
 // @desc    get all order of user
 // @route   GET /api/user/order/:id
 // @access  private admin
+// test rồi
 const getAllOrderOfUser = async (req, res, next) => {
     try {
         var id = req.params.id
-        var orderOfUser = await Order.find({user: id})
+        var orderOfUser = await Order.find({ user: id })
         if (orderOfUser) {
             res.status(200).json(orderOfUser)
         } else {
             res.status(400).json("NOT FOUND")
         }
-       
+
     } catch (error) {
         res.status(400).json("NOT FOUND")
     }
 }
-// search uer by name
+
 
 export { loginUser, profileUser, resgisterUser, updateProfileUser, getAllUsers, getUserById, acceptAdmin, getAllOrderOfUser }
