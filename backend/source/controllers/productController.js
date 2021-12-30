@@ -43,16 +43,14 @@ const getProduct = async (req, res, next) => {
             .limit(PAGE_SIZE)
             .skip((pageNumber - 1) * PAGE_SIZE)
 
-
-
         if (someProduct) {
             res.status(200).json({ someProduct, pageNumber, totalPage: Math.ceil(count / PAGE_SIZE) })
 
         } else {
-            res.status(404).json("NOT FOUND")
+            res.status(400).json("NOT FOUND")
         }
     } catch (error) {
-        res.status(404).json("NOT FOUND")
+        res.status(400).json("NOT FOUND")
     }
 
 }
@@ -158,7 +156,7 @@ const updateProduct = async (req, res, next) => {
 // @access Private
 const reviewProduct = async (req, res, next) => {
     try {
-        
+
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             res.status(400).json({ errors: errors.array() });
@@ -186,7 +184,7 @@ const reviewProduct = async (req, res, next) => {
                     rating: Number(rating),
                     comment
                 }
-               
+
                 product.reviews.push(newReview)
                 product.numReviews = product.reviews.length
 
@@ -196,9 +194,9 @@ const reviewProduct = async (req, res, next) => {
                     sumRating += product.reviews[i].rating;
                 }
                 product.rating = sumRating / product.numReviews
-                
+
                 await product.save()
-               
+
                 res.status(200).json("review added")
             }
 
@@ -210,4 +208,40 @@ const reviewProduct = async (req, res, next) => {
     }
 }
 
-export { getProduct, getProductById, deleteProductById, createProduct, updateProduct, reviewProduct }
+
+// @desc filter a product by brand, ram, rom, price 
+// @route get /api/product/filter?brand=apple&ram=4...
+// @access Private
+const filterProduct = async (req, res, next) => {
+    try {
+
+        var { brand, category } = req.query
+        var filterProduct = {}
+        if (brand) {
+            if (brand.trim) {
+                brand = brand.trim().split(",")
+                filterProduct["brand"] = {
+                    $in: brand
+                };
+            }
+
+        }
+
+        if (category) {
+            if (category.trim()) {
+                category = category.trim().split(",")
+                filterProduct["category"] = {
+                    $in: category
+                };
+            }
+
+        }
+
+        var someProduct = await Product.find({ ...filterProduct })
+        res.status(200).json(someProduct)
+
+    } catch (error) {
+        res.status(400).json("NOT FOUND PRODUCT")
+    }
+}
+export { getProduct, getProductById, deleteProductById, createProduct, updateProduct, reviewProduct, filterProduct }
