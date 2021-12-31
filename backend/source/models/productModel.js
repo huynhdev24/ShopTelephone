@@ -19,9 +19,9 @@ const productSchema = mongoose.Schema(
         brand       : { type: String, required: true },
         image       : { type: String, required: true },
         // số lượng sản phẩm tồn kho
-        countInStock: { type: Number, required: true, default: 0, },
+        countInStock: { type: Number, required: true, default: 0 },
         // mức độ khuyến mãi
-        discount    : { type: Number},
+        discount    : { type: Number, default: 0},
         // đánh giá 1 - 5 sao, tương ứng với index element từ 0 - 4
         rate        : {type: [Number], default: [0, 0, 0, 0, 0], },
         // mô tả sản phẩm

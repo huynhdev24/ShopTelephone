@@ -2,39 +2,75 @@ import mongoose from 'mongoose'
 
 const orderSchema = mongoose.Schema(
   {
-    user          : { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User', },
-    paymentMethod : { type: String, required: true, },
-    taxPrice      : { type: Number, required: true, default: 0.0, },
-    shippingPrice : { type: Number, required: true, default: 0.0, },
-    totalPrice    : { type: Number, required: true, default: 0.0, },
-    isPaid        : { type: Boolean, required: true, default: false, },
-    paidAt        : { type: Date, },
-    isDelivered   : { type: Boolean, required: true, default: false, },
-    deliveredAt   : { type: Date, },
+    user: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User', },
 
     orderItems: [
       {
-        name      : { type: String, required: true },
-        qty       : { type: Number, required: true },
-        image     : { type: String, required: true },
-        price     : { type: Number, required: true },
-        product   : { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Product'}
+        name: { type: String, required: true },
+        qty: { type: Number, required: true },
+        image: { type: String, required: true },
+        price: { type: Number, required: true },
+        discount: { type: Number, required: true, default: 0 },
+        product: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Product' }
       },
     ],
 
-    shippingAddress: {
-      address   : { type: String, required: true },
-      city      : { type: String, required: true },
-      postalCode: { type: String, required: true },
-      country   : { type: String, required: true },
+    // địa chỉ giao nhận
+    deliveryAdd: {
+      name: { type: String, required: true, trim: true, maxLength: 40 },
+      phone: { type: String, required: true, trim: true, maxLength: 10 },
+      // địa chỉ
+      address: {
+        type: Object,
+        required: true,
+        province: String,
+        district: String,
+        wards: String,
+        details: { type: String, default: '' },
+      },
     },
-   
-    paymentResult: {
-      id            : { type: String },
-      status        : { type: String },
-      update_time   : { type: String },
-      email_address : { type: String },
+
+    // hình thức giao hàng
+    // 0 - tiêu chuẩn, 1 - tiết kiệm, 2 - nhanh
+    transportMethod: {
+      type: Number,
+      enum: [0, 1, 2],
+      required: true,
+      default: 0,
     },
+
+    // trạng thái đơn hàng
+    // 0 - Đặt hàng thành công, 1 - TTB đã tiếp nhận, 2 - Đang lấy hàng, 3 - Đóng gói xong
+    // 4 - Bàn giao vận chuyển, 5 - Đang vận chuyển, 6 - Giao hàng thành công
+    orderStatus: {
+      type: Number,
+      enum: [...Array(7).keys()],
+      required: true,
+      default: 0,
+    },
+
+    // phí vận chuyển
+    transportFee: { type: Number, required: true, default: 0 },
+
+    // ghi chú cho đơn hàng
+    note: { type: String, trim: true, maxlength: 200 },
+
+    totalPrice: { type: Number, required: true, default: 0.0, },
+
+    // hình thức thanh toán
+    // 0 - thanh toán tiền mặt khi nhận hàng
+    // 1 - thanh toán qua VNPay
+    paymentMethod: { type: Number, required: true, enum: [0, 1], default: 0 },
+
+    isPaid: { type: Boolean, required: true, default: false, },
+    paidAt: { type: Date, },
+
+    // paymentResult: {
+    //   id: { type: String },
+    //   status: { type: String },
+    //   update_time: { type: String },
+    //   email_address: { type: String },
+    // },
 
   },
   {
@@ -45,3 +81,15 @@ const orderSchema = mongoose.Schema(
 const Order = mongoose.model('Order', orderSchema)
 
 export default Order
+
+
+
+
+
+
+
+
+
+
+
+

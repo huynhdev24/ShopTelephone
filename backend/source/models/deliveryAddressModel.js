@@ -1,7 +1,7 @@
 import mongoose from "mongoose"
 
 const deliveryAddressSchema = mongoose.Schema({
-    user          : { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User', },
+  user: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User', },
   list: {
     type: Array,
     // tên người nhận
@@ -20,7 +20,7 @@ const deliveryAddressSchema = mongoose.Schema({
 });
 
 //create Model
-const DeliveryAddress = mongoose.model('deliveryAddress',deliveryAddressSchema);
+const DeliveryAddress = mongoose.model('deliveryAddress', deliveryAddressSchema);
 
 export default DeliveryAddress
 
