@@ -4,7 +4,7 @@ import { validationResult } from 'express-validator';
 // @desc Order product
 // @route POST /api/order
 // @access private
-// chua test
+//  test rồi
 // chú ý tới cái ảnh
 const orderProduct = async (req, res, next) => {
     try {
@@ -37,14 +37,18 @@ const orderProduct = async (req, res, next) => {
                         transportFee,
                         orderProd,
                         numOfProd,
-                        note,                     
+                        note,
                     });
                 }
             } else {
                 return res.status(400).json("Product stop selling");
             }
         }
-        if (response) return res.status(400).json("do not create order");
+        if (response)
+            return res.status(200).json(" create successfully order")
+        else {
+            return res.status(400).json(" do not create order")
+        };
     } catch (error) {
         res.status(400).json("Not order product")
     }
@@ -53,32 +57,36 @@ const orderProduct = async (req, res, next) => {
 // @desc Get order by id
 // @route GET /api/order/:id
 // @access private
-// chua test
+// test rồi
 const getOrderById = async (req, res, next) => {
     try {
         var id = req.params.id
-        var order = await Order.findById({ _id: id }).populate('user', 'name email')
+        var order = await Order.findById({ _id: id }).select('-_id -user')
         if (order) {
-            res.status(200).json(order)
+            return res.status(200).json(order)
         } else {
-            res.status(404).json("ORDER NOT FOUND")
+            return res.status(400).json("ORDER NOT FOUND")
         }
 
     } catch (error) {
-        res.status(404).json("ORDER NOT FOUND")
+        return res.status(400).json("ORDER NOT FOUND")
     }
 }
 
 // @desc Get logged in user orders
 // @route GET /api/orders/myorders
 // @access private
-// chua test
+// test rồi
+// cần lấy thêm về theo thể loại nữa
 const getMyOrder = async (req, res, next) => {
     try {
         console.log(req.user._id)
         var orders = await Order.find({ user: req.user._id })
-        res.json(orders)
-
+        if (orders.length > 0) {
+            return res.status(200).json(orders)
+        } else {
+            return res.status(400).json("You do not have order")
+        }
     } catch (error) {
         res.status(400).json("ORDER NOT FOUND")
     }
@@ -87,43 +95,74 @@ const getMyOrder = async (req, res, next) => {
 // @desc Get all orders by admin
 // @route GET /api/orders
 // @access private admin
-// chua test
+// test rồi 
+//cân them cái lấy về theo thể loại nữa
 const getOrder = async (req, res, next) => {
     try {
         var allOrders = await Order.find()
         if (allOrders) {
             res.status(200).json(allOrders)
         } else {
-            res.status(404).json("Not found")
+            res.status(400).json("Do not have order")
         }
-    } catch (error) {
-        res.status(404).json("ORDER NOT FOUND")
-    }
-}
-
-// @desc Update order to delivered
-// @route PUT /api/order/:id/deliver
-// @access private admin
-// chua test
-const updateOrder = async (req, res, next) => {
-    try {
-        var idOrder = req.params.id
-        var order = await Order.findById(idOrder)
-        if (order) {
-            var orderAfterUpdate = await Order.findOneAndUpdate({ _id: idOrder }, { isDelivered: true, deliveredAt: Date.now() }, { new: true })
-            if (orderAfterUpdate) {
-                res.status(200).json(orderAfterUpdate)
-            } else {
-                res.status(500).json("NOT UPDATE")
-            }
-        } else {
-            res.status(404).json("NOT FOUND TO UPDATE")
-        }
-
-
     } catch (error) {
         res.status(400).json("ORDER NOT FOUND")
     }
 }
 
-export { orderProduct, getOrderById, getMyOrder, getOrder, updateOrder }
+// @desc Update orderStatus
+// @route PUT /api/order/:id/status
+// @access private admin
+// test rồi
+// trạng thái đơn hàng
+// 0 - Đặt hàng thành công, 1 - đã tiếp nhận đơn hàng, 2 - Chuẩn bị hàng
+// 3 - Bàn giao vận chuyển, 4 - Đang vận chuyển, 5 - Giao hàng thành công 6 - Hủy đơn hàng
+const updateOrder = async (req, res, next) => {
+    try {
+        var idOrder = req.params.id
+        var order = await Order.findById(idOrder)
+        if (order) {
+            var { orderStatus } = req.body
+            var orderAfterUpdate = await Order.findOneAndUpdate({ _id: idOrder }, { orderStatus: orderStatus }, { new: true })
+            if (orderAfterUpdate) {
+                return res.status(200).json(orderAfterUpdate)
+            } else {
+                return res.status(400).json("Not update orderStatus")
+            }
+        } else {
+            return res.status(400).json("NOT FOUND ORDER TO UPDATE")
+        }
+
+    } catch (error) {
+        return res.status(400).json("Not update orderStatus")
+    }
+}
+
+// @desc destroy order
+// @route PUT /api/order/:id/destroy
+// @access private (user)
+// test rồi
+// trạng thái đơn hàng
+// 0 - Đặt hàng thành công, 1 - đã tiếp nhận đơn hàng, 2 - Chuẩn bị hàng
+// 3 - Bàn giao vận chuyển, 4 - Đang vận chuyển, 5 - Giao hàng thành công 6 - Hủy đơn hàng
+const destroyOrder = async (req, res, next) => {
+    try {
+        var idOrder = req.params.id
+        var order = await Order.findById(idOrder)
+        if (order) {
+            var orderAfterDestroy = await Order.findOneAndUpdate({ _id: idOrder }, { orderStatus: 6 }, { new: true })
+            if (orderAfterDestroy) {
+                return res.status(200).json(orderAfterDestroy)
+            } else {
+                return res.status(400).json("Not destroy order")
+            }
+        } else {
+            return res.status(400).json("NOT FOUND ORDER TO DESTROY")
+        }
+
+    } catch (error) {
+        return res.status(400).json("Not destroy order")
+    }
+}
+
+export { orderProduct, getOrderById, getMyOrder, getOrder, updateOrder, destroyOrder }

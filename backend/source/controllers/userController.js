@@ -240,22 +240,22 @@ const acceptAdmin = async (req, res, next) => {
 }
 
 // 
-// @desc    get all order of user
+// @desc    get all order of one user by admin
 // @route   GET /api/user/order/:id
 // @access  private admin
-// chưa test rồi
+// test rồi
 const getAllOrderOfUser = async (req, res, next) => {
     try {
         var id = req.params.id
         var orderOfUser = await Order.find({ user: id })
-        if (orderOfUser) {
+        if (orderOfUser.length > 0) {
             res.status(200).json(orderOfUser)
         } else {
-            res.status(400).json("NOT FOUND")
+            res.status(400).json("Not found order")
         }
 
     } catch (error) {
-        res.status(400).json("NOT FOUND")
+        res.status(400).json("Not found order")
     }
 }
 
