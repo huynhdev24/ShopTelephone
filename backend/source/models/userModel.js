@@ -5,10 +5,11 @@ const userSchema = mongoose.Schema(
     name        : { type: String, required: true },
     email       : { type: String, required: true, unique: true, },
     password    : { type: String, required: true },
+    isAdmin     : { type: Boolean, required: true, default: false },
     address     : { type: String, trim: true },
     phoneNumber : { type: String, trim: true },
     gender      : { type: Boolean },
-    isAdmin     : { type: Boolean, required: true, default: false },
+    
     },
     {
         timestamps: true,

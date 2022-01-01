@@ -4,16 +4,14 @@ const orderSchema = mongoose.Schema(
   {
     user: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User', },
 
-    orderItems: [
-      {
-        name: { type: String, required: true },
-        qty: { type: Number, required: true },
-        image: { type: String, required: true },
-        price: { type: Number, required: true },
-        discount: { type: Number, required: true, default: 0 },
-        product: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Product' }
-      },
-    ],
+    orderItem: {
+      name: { type: String, required: true },
+      qty: { type: Number, required: true },
+      image: { type: String, required: true },
+      price: { type: Number, required: true },
+      priceDiscount: { type: Number },
+      product: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Product' }
+    },
 
     // địa chỉ giao nhận
     deliveryAdd: {
@@ -40,8 +38,8 @@ const orderSchema = mongoose.Schema(
     },
 
     // trạng thái đơn hàng
-    // 0 - Đặt hàng thành công, 1 - TTB đã tiếp nhận, 2 - Đang lấy hàng, 3 - Đóng gói xong
-    // 4 - Bàn giao vận chuyển, 5 - Đang vận chuyển, 6 - Giao hàng thành công
+    // 0 - Đặt hàng thành công, 1 - đã tiếp nhận đơn hàng, 2 - Chuẩn bị hàng
+    // 3 - Bàn giao vận chuyển, 4 - Đang vận chuyển, 5 - Giao hàng thành công 6 - Hủy đơn hàng
     orderStatus: {
       type: Number,
       enum: [...Array(7).keys()],

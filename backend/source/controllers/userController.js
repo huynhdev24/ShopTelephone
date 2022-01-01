@@ -26,6 +26,9 @@ const loginUser = async (req, res, next) => {
                     name: user.name,
                     email: user.email,
                     isAdmin: user.isAdmin,
+                    address: user.address,
+                    phoneNumber: user.phoneNumber,
+                    gender: user.gender,
                     token: generateToken(user._id),
                 })
             }
@@ -49,18 +52,22 @@ const loginUser = async (req, res, next) => {
 // test rồi
 const resgisterUser = async (req, res, next) => {
     try {
-        var { name, password, email } = req.body
+        var { name, password, email, phoneNumber, address, gender } = req.body
 
         var user = await User.findOne({ email: email })
 
         if (user) {
-            res.status(400).json("Acount exist")
+            return res.status(400).json("Acount exist")
         }
 
         var newUser = await User.create({
             name: name,
+            email: email,
+            phoneNumber,
+            address,
+            gender,
             password: bcrypt.hashSync(password, 10),
-            email: email
+
         })
 
         if (newUser) {
@@ -68,6 +75,9 @@ const resgisterUser = async (req, res, next) => {
                 _id: newUser._id,
                 name: newUser.name,
                 email: newUser.email,
+                phoneNumber,
+                address,
+                gender,
                 isAdmin: newUser.isAdmin,
                 token: generateToken(newUser._id),
             })
@@ -77,7 +87,7 @@ const resgisterUser = async (req, res, next) => {
         }
 
     } catch (error) {
-        res.status(500).json("Failed resgister")
+        res.status(400).json("Failed resgister")
     }
 }
 
@@ -86,30 +96,53 @@ const resgisterUser = async (req, res, next) => {
 // @access  private
 // test rồi
 const profileUser = (req, res, next) => {
-   
+
 
     if (req.user) {
         res.status(200).json(req.user)
     } else {
-        res.status(404).json("NOT FOUND")
+        res.status(400).json("Not found profile user")
     }
 }
 
 // @desc    update profile user
 // @route   PUT /api/user/profile
 // @access  private
+
 const updateProfileUser = async (req, res, next) => {
     try {
         // thieu validation
         var { name, email, password } = req.body
+        var address = req.body.address || ""
+        var phoneNumber = req.body.phoneNumber || ""
+        var gender = req.body.gender || false
+
         var idUserUpdate = req.user._id
 
-        var userAfterUpdate = await User.findOneAndUpdate({ _id: idUserUpdate }, { name: name, email: email, password: bcrypt.hashSync(password, 10) }, { new: true })
+        var userAfterUpdate = await User.findOneAndUpdate(
+                                                            {
+                                                                _id: idUserUpdate
+                                                            },
+                                                            {
+                                                                name,
+                                                                email,
+                                                                address,
+                                                                phoneNumber,
+                                                                gender,
+                                                                password: bcrypt.hashSync(password, 10)
+                                                            },
+                                                            {
+                                                                new: true
+                                                            }
+                                                        )
 
         res.status(200).json({
             _id: userAfterUpdate._id,
             name: userAfterUpdate.name,
             email: userAfterUpdate.email,
+            address: userAfterUpdate.address,
+            phoneNumber: userAfterUpdate.phoneNumber,
+            gender: userAfterUpdate.gender,
             isAdmin: userAfterUpdate.isAdmin,
             token: generateToken(userAfterUpdate._id),
         })
@@ -131,6 +164,7 @@ const getAllUsers = async (req, res, next) => {
             ? {
                 'name': {
                     $regex: req.query.name,
+                    // i khong phân biệt chứ hoa chữ thường
                     $options: 'i',
                 }
 
@@ -150,13 +184,13 @@ const getAllUsers = async (req, res, next) => {
             .skip((pageNumber - 1) * PAGE_SIZE)
 
         if (getUsers) {
-            res.status(200).json({ getUsers, pageNumber, totalPage: Math.ceil(count / PAGE_SIZE) })
+            return res.status(200).json({ getUsers, pageNumber, totalPage: Math.ceil(count / PAGE_SIZE) })
 
         } else {
-            res.status(404).json("NOT FOUND")
+            return res.status(404).json("NOT FOUND")
         }
     } catch (error) {
-        res.status(404).json("NOT FOUND")
+        return res.status(404).json("NOT FOUND")
     }
 }
 
@@ -169,12 +203,12 @@ const getUserById = async (req, res, next) => {
         var id = req.params.id
         var user = await User.findById({ _id: id }).select('-password')
         if (user) {
-            res.status(200).json(user)
+            return res.status(200).json(user)
         } else {
-            res.status(500).json("NOT FOUND")
+            return res.status(400).json("NOT FOUND")
         }
     } catch (error) {
-        res.status(500).json("NOT FOUND")
+        return res.status(400).json("NOT FOUND")
     }
 }
 
@@ -190,18 +224,18 @@ const acceptAdmin = async (req, res, next) => {
 
         if (user) {
             var userAfterUpdate = await User.findOneAndUpdate({ _id: id }, { isAdmin: true }, { new: true })
-            res.status(200).json({
+            return res.status(200).json({
                 _id: userAfterUpdate._id,
                 name: userAfterUpdate.name,
                 email: userAfterUpdate.email,
                 isAdmin: userAfterUpdate.isAdmin,
             })
         } else {
-            res.status(404).json("Not update")
+            return res.status(400).json("accept admin fail")
         }
 
     } catch (error) {
-        res.status(404).json("Not update")
+        return res.status(400).json("accept admin fail")
     }
 }
 
@@ -209,7 +243,7 @@ const acceptAdmin = async (req, res, next) => {
 // @desc    get all order of user
 // @route   GET /api/user/order/:id
 // @access  private admin
-// test rồi
+// chưa test rồi
 const getAllOrderOfUser = async (req, res, next) => {
     try {
         var id = req.params.id
