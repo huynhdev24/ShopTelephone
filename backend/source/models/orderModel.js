@@ -3,15 +3,15 @@ import mongoose from 'mongoose'
 const orderSchema = mongoose.Schema(
   {
     user: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User', },
-
-    orderItem: {
+    
+    orderProd: {
       name: { type: String, required: true },
-      qty: { type: Number, required: true },
-      image: { type: String, required: true },
       price: { type: Number, required: true },
       priceDiscount: { type: Number },
-      product: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Product' }
+      id: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Product' }
     },
+    // số lượng
+    numOfProd: { type: Number, required: true, default: 1 },
 
     // địa chỉ giao nhận
     deliveryAdd: {
@@ -52,8 +52,6 @@ const orderSchema = mongoose.Schema(
 
     // ghi chú cho đơn hàng
     note: { type: String, trim: true, maxlength: 200 },
-
-    totalPrice: { type: Number, required: true, default: 0.0, },
 
     // hình thức thanh toán
     // 0 - thanh toán tiền mặt khi nhận hàng
