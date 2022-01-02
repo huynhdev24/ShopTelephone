@@ -4,6 +4,7 @@ import connectDB from './config/db.js'
 import productRoutes from './routes/productRoutes.js'
 import userRoutes from './routes/userRoutes.js'
 import orderRoutes from './routes/orderRoutes.js'
+import statisticRoutes from './routes/statisticRoutes.js'
 import bodyParser from "body-parser"
 dotenv.config()
 // connect database
@@ -22,6 +23,7 @@ app.get('/', (req, res) => {
 app.use('/api/product', productRoutes)
 app.use('/api/user', userRoutes)
 app.use('/api/orders', orderRoutes)
+app.use('/api/statistic', statisticRoutes)
 
 // listen PORT
 const PORT = process.env.PORT || 5000
