@@ -37,7 +37,7 @@ const getRevenue = async (req, res, next) => {
 }
 
 
-// @desc statistic product of store by brand and number product in stock
+// @desc statistic number product of store by brand and number product in stock by brand
 // @route GET /api/statistic/productBrand
 // @access admin
 
@@ -73,7 +73,7 @@ const getProductByBrand = async (req, res, next) => {
     }
 }
 
-// @desc statistic product is bought by brand 
+// @desc statistic revenue, number product is bought by brand 
 // @route GET /api/statistic/productBoughtBrand
 // @access admin
 
@@ -88,7 +88,7 @@ const getProductBoughtByBrand = async (req, res, next) => {
             for (let index = 0; index < allOrders.length; index++) {
                 var idProduct = allOrders[index].orderProd.id
                 var product = await Product.findById({ _id: idProduct })
-              
+
                 if (product) {
 
                     let brand = product.brand
@@ -121,5 +121,116 @@ const getProductBoughtByBrand = async (req, res, next) => {
     }
 }
 
+// @desc thong ke so luong don hang thanh cong theo thang dua vao day de biet thang nao co nhieu don hang nhat 
+// @route GET /api/statistic/orderSuccessMonth?year=2021
+// @access admin
+const getNumOrderSuccesMonth = async (req, res, next) => {
+    try {
 
-export { getRevenue, getProductByBrand, getProductBoughtByBrand }
+        var d = new Date();
+        var currentYear = d.getFullYear();
+        var year = req.query.year || currentYear
+        var orderSuccMonth = {}
+
+        for (let i = 1; i <= 12; i++) {
+            orderSuccMonth[i] = 0
+        }
+
+        var allOrders = await Order.find({
+            createdAt: {
+                $gte: new Date(`${year}-01-01`),
+                $lte: new Date(`${year}-12-31`),
+            },
+            orderStatus: 6,
+        })
+
+        if (allOrders) {
+            for (let index = 0; index < allOrders.length; index++) {
+                let monthIndex = allOrders[index].createdAt.getMonth()
+                orderSuccMonth[monthIndex + 1] += allOrders[index].numOfProd
+            }
+            return res.status(200).json(orderSuccMonth)
+        } else {
+            return res.status(400).json("Do not have any order")
+        }
+
+    } catch (error) {
+        return res.status(400).json("not statistic revenue by brand and product bought by brand")
+    }
+}
+// @desc thong ke doanh thu theo thang 
+// @route GET /api/statistic/revenueMonth?year=2021
+// @access admin
+const getRevenueMonth = async (req, res, next) => {
+    try {
+
+        var d = new Date();
+        var currentYear = d.getFullYear();
+        var year = req.query.year || currentYear
+        var revenueMonth = {}
+
+        for (let i = 1; i <= 12; i++) {
+            revenueMonth[i] = 0
+        }
+
+        var allOrders = await Order.find({
+            createdAt: {
+                $gte: new Date(`${year}-01-01`),
+                $lte: new Date(`${year}-12-31`),
+            },
+            orderStatus: 6,
+        })
+
+        console.log("=======================================")
+        if (allOrders) {
+            for (let index = 0; index < allOrders.length; index++) {
+                let monthIndex = allOrders[index].createdAt.getMonth()
+                revenueMonth[monthIndex + 1] += (allOrders[index].numOfProd * allOrders[index].orderProd.priceDiscount + allOrders[index].transportFee)               
+            }
+            return res.status(200).json(revenueMonth)
+        } else {
+            return res.status(400).json("Do not have any order")
+        }
+
+    } catch (error) {
+        return res.status(400).json("not statistic revenue by brand and product bought by brand")
+    }
+}
+
+// @desc thong ke so luong user dang ki tai khoan theo thang 
+// @route GET /api/statistic/registerUser?year=2021
+// @access admin
+const getNumRegisUser = async (req, res, next) => {
+    try {
+
+        var d = new Date();
+        var currentYear = d.getFullYear();
+        var year = req.query.year || currentYear
+        var regisUserMonth = {}
+
+        for (let i = 1; i <= 12; i++) {
+            regisUserMonth[i] = 0
+        }
+
+        var allUsers = await User.find({
+            createdAt: {
+                $gte: new Date(`${year}-01-01`),
+                $lte: new Date(`${year}-12-31`),
+            },
+        })
+
+        
+        if (allUsers) {
+            for (let index = 0; index < allUsers.length; index++) {
+                let monthIndex = allUsers[index].createdAt.getMonth()
+                regisUserMonth[monthIndex + 1] += 1               
+            }
+            return res.status(200).json(regisUserMonth)
+        } 
+
+    } catch (error) {
+        return res.status(400).json("not statistic revenue by brand and product bought by brand")
+    }
+}
+
+export { getRevenue, getProductByBrand, getProductBoughtByBrand, getNumOrderSuccesMonth, getRevenueMonth, getNumRegisUser }
