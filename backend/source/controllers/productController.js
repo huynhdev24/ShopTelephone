@@ -1,5 +1,8 @@
-import Product from '../models/productModel.js'
 import { validationResult } from 'express-validator';
+import path from 'path'
+import fs from 'fs'
+import { uploadToCloudinary  } from '../utils/uploadToCloudinary.js'
+import Product from '../models/productModel.js'
 
 // @desc Fetch single product
 // @route GET /api/product/:id
@@ -84,18 +87,17 @@ const deleteProductById = async (req, res, next) => {
 // @desc create a product 
 // @route POST /api/product
 // @access Private admin
-// 
-// upload ảnh chưa có
 // phats trien thuat toan kiem tra 2 product co giong nhau hay ko
 // thieu validation
 // test roi 
 const createProduct = async (req, res, next) => {
     try {
+              
         var user = req.user._id
+        
         var { name,
             price,
             brand,
-            image,
             countInStock,
             priceDiscount,
             description,
@@ -114,16 +116,24 @@ const createProduct = async (req, res, next) => {
         if (brand) {
             brand = brand.toLowerCase()
         }
+
+        //var imagePath = path.join(process.env.URL_PORT, req.file.filename)
+        var locaFilePath = req.file.path 
+
         var productExist = await Product.find({ name: name })
         if (productExist.length > 0) {
-            return res.status(400).json("Product exist")
+            fs.unlinkSync(locaFilePath)
+            return res.status(400).json("Product exist, try again")
         }
+        
+        var result = await uploadToCloudinary(locaFilePath)
+        
         var newProduct = await Product.create({
             user,
             name,
             price,
             brand,
-            image,
+            image: result.url,
             countInStock,
             priceDiscount,
             description,
@@ -138,14 +148,15 @@ const createProduct = async (req, res, next) => {
             pin,
             otherInfo
         });
+
         if (newProduct) {
             return res.status(200).json(newProduct)
         } else {
-            return res.status(400).json("Not create product")
+            return res.status(400).json("Not create product, try again")
         }
 
     } catch (error) {
-        return res.status(400).json("Not create product")
+        return res.status(400).json("Not create product..............., try again")
     }
 }
 

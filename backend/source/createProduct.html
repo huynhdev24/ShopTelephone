@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>create product</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+</head>
+
+<body>
+    <!-- UPLOAD SINGLE FILE -->
+    <div class="mb-3">
+        <form enctype="multipart/form-data" id="updateImage">
+            <label>create product </label>
+            
+            <label for="name">nameProduct:</label><br>
+            <input type="text" id="name" name="name"><br>
+
+            <label for="name"> priceProduct:</label><br>
+            <input type="text" id="price" name="price"><br>           
+           
+            <label for="name"> brandProduct:</label><br>
+            <input type="text" id="brand" name="brand"><br>
+               
+            <label for="name">  countInStockProduct:</label><br>
+            <input type="text" id="countInStock" name="countInStock"><br>
+            
+            <label for="name"> priceDiscountProduct:</label><br>
+            <input type="text" id="priceDiscount" name="priceDiscount"><br>
+            
+            <label for="name"> descriptionProduct:</label><br>
+            <input type="text" id="description" name="description"><br>
+            
+            <label for="name"> chipsetProduct:</label><br>
+            <input type="text" id="chipset" name="chipset"><br>
+            
+            <label for="name"> romProduct:</label><br>
+            <input type="text" id="rom" name="rom"><br>
+            
+            <label for="name"> ramProduct:</label><br>
+            <input type="text" id="ram" name="ram"><br>
+            
+            <label for="name"> colorProduct:</label><br>
+            <input type="text" id="color" name="color"><br>
+            
+            <label for="name"> operatingProduct:</label><br>
+            <input type="text" id="operating" name="operating"><br>
+            
+            <label for="name"> cameraTruocProduct:</label><br>
+            <input type="text" id="cameraTruoc" name="cameraTruoc"><br>
+            
+            <label for="name"> cameraSauProduct:</label><br>
+            <input type="text" id="cameraSau" name="cameraSau"><br>
+            
+            <label for="name"> manHinhProduct:</label><br>
+            <input type="text" id="manHinh" name="manHinh"><br>
+           
+            <label for="name"> pinProduct:</label><br>
+            <input type="text" id="pin" name="pin"><br>
+
+            <label for="name"> imageProduct:</label><br>
+            <input class="form-control" type="file" id="formFile" name="formFile">
+
+            <input type="submit" id="Save" value="create product" />
+        </form>
+    </div>
+
+
+    <script>
+        console.log("hi")
+     
+        //form Submit
+        $("form").submit(function (evt) {
+            window.alert(5 + 6);
+            evt.preventDefault();
+            var formData = new FormData($(this)[0]);
+            $.ajax({
+                url: 'http://localhost:5000/api/product',
+                type: 'POST',
+                data: formData,
+                enctype: 'multipart/form-data',
+                headers: {
+                    "Authorization": "Bear eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZDA5ZTUwOGRmNjlhM2Y0ZWJlZGUxOSIsImlhdCI6MTY0MTI5MzM2Mn0.n8GzC85CsaXIBkWo6EcPSTo8jWWPpPj9I583ep7Spic"
+                },
+                async: false,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (data, textStatus, xhr) {
+                    console.log(data);
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    console.log('Error in Operation');
+                }
+            });
+        });
+
+    </script>
+
+  
+
+</body>
+
+</html>
