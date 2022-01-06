@@ -31,13 +31,17 @@ var __dirname = path.resolve()
 app.use(express.static('uploads'))
 
 // lat xoa
-app.get('/createProduct', function (req, res) {
-  res.sendFile(__dirname + '/source/createProduct.html');
+// app.get('/createProduct', function (req, res) {
+//   res.sendFile(__dirname + '/source/createProduct.html');
+// })
+
+app.get('/updateProduct', function (req, res) {
+  res.sendFile(__dirname + '/source/updateProduct.html');
 })
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+// app.get('/', (req, res) => {
+//   res.send('Hello World!')
+// })
 
 app.use('/api/product', productRoutes)
 app.use('/api/user', userRoutes)

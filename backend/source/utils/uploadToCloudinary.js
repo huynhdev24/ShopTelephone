@@ -1,9 +1,9 @@
 import cloudinary from 'cloudinary'
 import path from 'path'
 import fs from 'fs'
+
 // locaFilePath: path of image which was just
 // uploaded to "uploads" folder
-
 async function uploadToCloudinary(locaFilePath) {
 
     // filePathOnCloudinary: path of image we want
@@ -11,10 +11,10 @@ async function uploadToCloudinary(locaFilePath) {
     var mainFolderName = "image";
     var filePathOnCloudinary = path.join(mainFolderName, locaFilePath)
     var pathImageCloud = filePathOnCloudinary.replaceAll("\\", "/");
+    pathImageCloud = pathImageCloud.split(".")[0]
 
     return cloudinary.v2.uploader.upload(locaFilePath, { public_id: pathImageCloud })
         .then((result) => {
-
             // Image has been successfully uploaded on
             // cloudinary So we dont need local image 
             // file anymore
@@ -34,4 +34,25 @@ async function uploadToCloudinary(locaFilePath) {
         });
 }
 
-export { uploadToCloudinary }
+async function deleteFileInCloudinary(imageUrl) {
+    let nameArray = imageUrl.split("/")
+    let nameImage = nameArray[nameArray.length-1]
+    nameImage = nameImage.split(".")[0]
+    let pathImageCloud =  path.join("image", "uploads",nameImage)
+    pathImageCloud = pathImageCloud.replaceAll("\\", "/")
+   
+
+    return cloudinary.v2.uploader.destroy(pathImageCloud)
+        .then((result) => {
+            
+            return {
+                message: "Success",
+            };
+        })
+        .catch((error) => {
+           
+            return { message: "Fail" };
+        });
+}
+
+export { uploadToCloudinary, deleteFileInCloudinary }

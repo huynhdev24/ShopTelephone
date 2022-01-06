@@ -1,7 +1,7 @@
 import { validationResult } from 'express-validator';
 import path from 'path'
 import fs from 'fs'
-import { uploadToCloudinary  } from '../utils/uploadToCloudinary.js'
+import { uploadToCloudinary, deleteFileInCloudinary } from '../utils/uploadToCloudinary.js'
 import Product from '../models/productModel.js'
 
 // @desc Fetch single product
@@ -17,8 +17,6 @@ const getProductById = async (req, res, next) => {
         } else {
             return res.status(400).json("not found product")
         }
-
-
     } catch (error) {
         return res.status(400).json("not found product")
     }
@@ -67,12 +65,14 @@ const getProduct = async (req, res, next) => {
 // @route DELETE /api/product/:id
 // @access Private admin
 // test roi
+// chua xong 
 const deleteProductById = async (req, res, next) => {
     try {
         var idProduct = req.params.id
         var product = await Product.findById(idProduct)
 
         if (product) {
+            // con xoa file anh tren cloudinary nua
             await Product.deleteOne({ _id: idProduct })
             res.status(200).json("Success deleted")
         } else {
@@ -92,9 +92,9 @@ const deleteProductById = async (req, res, next) => {
 // test roi 
 const createProduct = async (req, res, next) => {
     try {
-              
+
         var user = req.user._id
-        
+
         var { name,
             price,
             brand,
@@ -117,17 +117,16 @@ const createProduct = async (req, res, next) => {
             brand = brand.toLowerCase()
         }
 
-        //var imagePath = path.join(process.env.URL_PORT, req.file.filename)
-        var locaFilePath = req.file.path 
+        var locaFilePath = req.file.path
 
         var productExist = await Product.find({ name: name })
         if (productExist.length > 0) {
             fs.unlinkSync(locaFilePath)
             return res.status(400).json("Product exist, try again")
         }
-        
+
         var result = await uploadToCloudinary(locaFilePath)
-        
+
         var newProduct = await Product.create({
             user,
             name,
@@ -156,6 +155,7 @@ const createProduct = async (req, res, next) => {
         }
 
     } catch (error) {
+
         return res.status(400).json("Not create product..............., try again")
     }
 }
@@ -168,14 +168,15 @@ const createProduct = async (req, res, next) => {
 const updateProduct = async (req, res, next) => {
     try {
         var idProduct = req.params.id
+        var locaFilePath = req.file.path
 
         var product = await Product.findById(idProduct)
 
         if (product) {
+    
             var { name,
                 price,
                 brand,
-                image,
                 countInStock,
                 description,
                 chipset,
@@ -183,6 +184,10 @@ const updateProduct = async (req, res, next) => {
                 ram,
             } = req.body
 
+            if (brand) {
+                brand = brand.toLowerCase()
+            }
+            
             var priceDiscount = req.body.priceDiscount || req.body.price
             var color = req.body.color || ""
             var operating = req.body.operating || ""
@@ -191,8 +196,11 @@ const updateProduct = async (req, res, next) => {
             var manHinh = req.body.manHinh || ""
             var pin = req.body.pin || ""
             var otherInfo = req.body.otherInfo || []
-            
-            // them validation day ne hihi
+
+            // xoa file anh tren cloudinary 
+            await deleteFileInCloudinary(product.image)
+            // sau do moi tien hanh upload anh moi len cloudinary
+            var result = await uploadToCloudinary(locaFilePath)
 
             var productAfterUpdate = await Product.findOneAndUpdate(
                 {
@@ -202,7 +210,7 @@ const updateProduct = async (req, res, next) => {
                     name,
                     price,
                     brand,
-                    image,
+                    image: result.url,
                     countInStock,
                     priceDiscount,
                     description,
@@ -221,12 +229,15 @@ const updateProduct = async (req, res, next) => {
                     new: true
                 })
 
+
             return res.status(200).json(productAfterUpdate)
         } else {
+            fs.unlinkSync(locaFilePath)
             return res.status(400).json("Not update product")
         }
 
     } catch (error) {
+        // neu ton tai file thi anh thi xoa
         res.status(400).json("Not update product")
     }
 }
@@ -248,7 +259,7 @@ const reviewProduct = async (req, res, next) => {
         var idProduct = req.params.id
         var { comment, rating } = req.body
         var product = await Product.findById(idProduct)
-       
+
         if (product) {
             var check = false
             product.reviews.forEach(element => {

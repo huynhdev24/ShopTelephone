@@ -98,4 +98,41 @@ const deleteDeliveryAddress = async (req, res, next) => {
     }
 }
 
-export { createDeliveryAddress, getDeliveryAddressList, deleteDeliveryAddress }
+
+// @desc update a delivery address
+// @route PUT /api/deliveryAddress/:item
+// @access Private 
+
+const updateDeliveryAddress = async (req, res, next) => {
+    try {
+        // validation name, phone, address (name, phone, address bat buoc phai co)
+
+        var item = Number(req.params.item)
+        if (item) {
+            
+            var { name, phone, address } = req.body
+            var user = req.user._id
+            var newDeliveryAddress = {
+                name,
+                phone,
+                address
+            }
+            var deliveryAddressExist = await DeliveryAddress.findOne({ user: user })
+
+            if (deliveryAddressExist) {
+                if (item >= 1) {
+                    deliveryAddressExist.list[item - 1] = newDeliveryAddress
+                    await deliveryAddressExist.save()
+                    return res.status(200).json("update delivery address success")
+                }
+            }
+        }
+
+        return res.status(400).json("fail to update delivery address, try again")
+
+    } catch (error) {
+        return res.status(400).json("fail to update delivery address, try again")
+    }
+}
+
+export { createDeliveryAddress, getDeliveryAddressList, deleteDeliveryAddress, updateDeliveryAddress }
