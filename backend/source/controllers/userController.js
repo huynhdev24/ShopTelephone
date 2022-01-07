@@ -10,7 +10,11 @@ import bcrypt from 'bcryptjs'
 // test rồi
 const loginUser = async (req, res, next) => {
     try {
-        // thieu validion
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {           
+            return res.status(400).json({ errors: errors.array() })            
+        }
+
         var { email, password } = req.body
 
         if (email) {
@@ -33,15 +37,15 @@ const loginUser = async (req, res, next) => {
                 })
             }
             else {
-                res.status(404).json("Invalid name or password")
+                return res.status(400).json("Invalid name or password")
             }
 
         } else {
-            res.json("You have to fill complete information")
+            return res.status(400).json("You have to fill complete information")
         }
 
     } catch (error) {
-        res.status(500).json("Login failed")
+        return res.status(400).json("Login failed")
     }
 }
 
@@ -52,6 +56,11 @@ const loginUser = async (req, res, next) => {
 // test rồi
 const resgisterUser = async (req, res, next) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {           
+            return res.status(400).json({ errors: errors.array() })            
+        }
+        
         var { name, password, email, phoneNumber, address, gender } = req.body
 
         var user = await User.findOne({ email: email })
@@ -75,19 +84,19 @@ const resgisterUser = async (req, res, next) => {
                 _id: newUser._id,
                 name: newUser.name,
                 email: newUser.email,
-                phoneNumber,
-                address,
-                gender,
+                phoneNumber: newUser.phoneNumber,
+                address: newUser.address,
+                gender: newUser.gender,
                 isAdmin: newUser.isAdmin,
                 token: generateToken(newUser._id),
             })
         } else {
-            res.status(400).json("Invalid user data")
+            return res.status(400).json("Invalid user data")
 
         }
 
     } catch (error) {
-        res.status(400).json("Failed resgister")
+        return res.status(400).json("Failed resgister")
     }
 }
 
@@ -111,7 +120,12 @@ const profileUser = (req, res, next) => {
 
 const updateProfileUser = async (req, res, next) => {
     try {
-        // thieu validation
+        
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {           
+            return res.status(400).json({ errors: errors.array() })            
+        }
+        
         var { name, email, password } = req.body
         var address = req.body.address || ""
         var phoneNumber = req.body.phoneNumber || ""

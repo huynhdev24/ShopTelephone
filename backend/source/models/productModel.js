@@ -14,10 +14,10 @@ const productSchema = mongoose.Schema(
     {
         // admin tao ra san pham co quyen xem them sua xoa
         user        : { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' },
-        name        : { type: String, required: true },
+        name        : { type: String, required: true, trim: true },
         price       : { type: Number, required: true, default: 0 },
-        brand       : { type: String, required: true, lowercase: true  },
-        image       : { type: String, required: true },
+        brand       : { type: String, required: true, lowercase: true, trim: true  },
+        image       : { type: String, required: true, trim: true },
         // số lượng sản phẩm tồn kho
         countInStock: { type: Number, required: true, default: 0 },
         // mức độ khuyến mãi

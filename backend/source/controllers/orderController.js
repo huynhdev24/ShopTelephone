@@ -8,6 +8,10 @@ import { validationResult } from 'express-validator';
 // chú ý tới cái ảnh
 const orderProduct = async (req, res, next) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {          
+            return res.status(400).json({ errors: errors.array() })            
+        }
         var user = req.user._id
         var { productList,
             deliveryAdd,
@@ -80,7 +84,7 @@ const getOrderById = async (req, res, next) => {
 // cần lấy thêm về theo thể loại nữa
 const getMyOrder = async (req, res, next) => {
     try {
-        console.log(req.user._id)
+       
         var orders = await Order.find({ user: req.user._id })
         if (orders.length > 0) {
             return res.status(200).json(orders)

@@ -65,15 +65,16 @@ const getProduct = async (req, res, next) => {
 // @route DELETE /api/product/:id
 // @access Private admin
 // test roi
-// chua xong 
 const deleteProductById = async (req, res, next) => {
     try {
         var idProduct = req.params.id
         var product = await Product.findById(idProduct)
-
+        
         if (product) {
-            // con xoa file anh tren cloudinary nua
+            
             await Product.deleteOne({ _id: idProduct })
+            await deleteFileInCloudinary(product.image)
+            
             res.status(200).json("Success deleted")
         } else {
             res.status(400).json("Not found product to delete")
@@ -88,10 +89,19 @@ const deleteProductById = async (req, res, next) => {
 // @route POST /api/product
 // @access Private admin
 // phats trien thuat toan kiem tra 2 product co giong nhau hay ko
-// thieu validation
 // test roi 
 const createProduct = async (req, res, next) => {
     try {
+
+        var locaFilePath = req.file.path
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            if (locaFilePath) {
+                fs.unlinkSync(locaFilePath)
+            }            
+            return res.status(400).json({ errors: errors.array() })            
+        }
 
         var user = req.user._id
 
@@ -116,8 +126,6 @@ const createProduct = async (req, res, next) => {
         if (brand) {
             brand = brand.toLowerCase()
         }
-
-        var locaFilePath = req.file.path
 
         var productExist = await Product.find({ name: name })
         if (productExist.length > 0) {
@@ -155,7 +163,9 @@ const createProduct = async (req, res, next) => {
         }
 
     } catch (error) {
-
+        if (locaFilePath) {
+            fs.unlinkSync(locaFilePath)
+        }
         return res.status(400).json("Not create product..............., try again")
     }
 }
@@ -169,6 +179,14 @@ const updateProduct = async (req, res, next) => {
     try {
         var idProduct = req.params.id
         var locaFilePath = req.file.path
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            if (locaFilePath) {
+                fs.unlinkSync(locaFilePath)
+            }            
+            return res.status(400).json({ errors: errors.array() })            
+        }
 
         var product = await Product.findById(idProduct)
 

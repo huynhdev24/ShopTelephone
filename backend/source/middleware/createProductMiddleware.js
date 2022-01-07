@@ -36,14 +36,14 @@ const uploadFile = (req, res, next) => {
   up(req, res, function (err) {
     if (req.file) {
       if (err instanceof multer.MulterError) {
-        res.json("error upload file")
+        res.status(400).json("error upload file")
       } else if (err) {
-        res.json("error upload file")
+        res.status(400).json("error upload file")
       }
       // Everything went fine. 
       next()
     } else {
-      res.json("NOT FILE")
+      res.status(400).json("error upload file")
     }
 
   })
@@ -59,14 +59,14 @@ const updateFile = (req, res, next) => {
   up(req, res, function (err) {
     if (req.file) {
       if (err instanceof multer.MulterError) {
-        res.json("error update file")
+        res.status(400).json("error upload file")
       } else if (err) {
-        res.json("error update file")
+        res.status(400).json("error upload file")
       }
       // Everything went fine. 
       next()
     } else {
-      res.json("NOT FILE")
+      res.status(400).json("error upload file")
     }
 
   })

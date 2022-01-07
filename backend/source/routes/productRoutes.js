@@ -9,8 +9,8 @@ router.get('/filter', filterProduct)
 router.get('/:id', getProductById)
 router.delete('/:id', checkLogin, checkAdmin, deleteProductById)
 router.get('/', getProduct)
-router.post('/', checkLogin, checkAdmin, uploadFile, createProduct)
-router.put('/:id', checkLogin, checkAdmin, updateFile, updateProduct)
+router.post('/', checkLogin, checkAdmin, uploadFile, validate('informationProduct'), createProduct)
+router.put('/:id', checkLogin, checkAdmin, updateFile, validate('informationProduct'), updateProduct)
 
 router.post('/review/:id', checkLogin, validate('reviewProduct'), reviewProduct)
 

@@ -1,9 +1,11 @@
 import express from "express";
 import { orderProduct, getOrderById, getMyOrder, getOrder, updateOrder, destroyOrder } from '../controllers/orderController.js'
 import { checkLogin, checkAdmin } from '../middleware/autheMiddleware.js'
+import { validate } from '../middleware/validationMiddleware.js'
+
 const router = express.Router()
 
-router.post('/', checkLogin, orderProduct)
+router.post('/', checkLogin, validate('informationOrderProduct'), orderProduct)
 router.get('/myorders', checkLogin, getMyOrder)
 router.get('/:id', checkLogin, getOrderById)
 router.get('/', checkLogin, checkAdmin, getOrder)

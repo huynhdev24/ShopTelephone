@@ -15,8 +15,8 @@ const orderSchema = mongoose.Schema(
 
     // địa chỉ giao nhận
     deliveryAdd: {
-      name: { type: String, required: true, trim: true, maxLength: 40 },
-      phone: { type: String, required: true, trim: true, maxLength: 10 },
+      name: { type: String, required: true, trim: true, maxLength: 40, trim: true },
+      phone: { type: String, required: true, trim: true, maxLength: 10, trim: true },
       // địa chỉ
       address: {
         type: Object,

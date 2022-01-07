@@ -1,4 +1,5 @@
 import DeliveryAddress from '../models/deliveryAddressModel.js'
+import { validationResult } from 'express-validator';
 
 // @desc create a delivery address
 // @route POST /api/deliveryAddress
@@ -6,7 +7,11 @@ import DeliveryAddress from '../models/deliveryAddressModel.js'
 
 const createDeliveryAddress = async (req, res, next) => {
     try {
-        // validation name, phone, address (name, phone, address bat buoc phai co)
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() })
+        }
         var { name, phone, address } = req.body
 
         var user = req.user._id
@@ -105,8 +110,12 @@ const deleteDeliveryAddress = async (req, res, next) => {
 
 const updateDeliveryAddress = async (req, res, next) => {
     try {
-        // validation name, phone, address (name, phone, address bat buoc phai co)
-
+        
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() })
+        }
+      
         var item = Number(req.params.item)
         if (item) {
             
@@ -117,8 +126,9 @@ const updateDeliveryAddress = async (req, res, next) => {
                 phone,
                 address
             }
+            
             var deliveryAddressExist = await DeliveryAddress.findOne({ user: user })
-
+            
             if (deliveryAddressExist) {
                 if (item >= 1) {
                     deliveryAddressExist.list[item - 1] = newDeliveryAddress
@@ -130,7 +140,7 @@ const updateDeliveryAddress = async (req, res, next) => {
 
         return res.status(400).json("fail to update delivery address, try again")
 
-    } catch (error) {
+    } catch (error) {      
         return res.status(400).json("fail to update delivery address, try again")
     }
 }
