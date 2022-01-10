@@ -69,12 +69,12 @@ const deleteProductById = async (req, res, next) => {
     try {
         var idProduct = req.params.id
         var product = await Product.findById(idProduct)
-        
+
         if (product) {
-            
+
             await Product.deleteOne({ _id: idProduct })
             await deleteFileInCloudinary(product.image)
-            
+
             res.status(200).json("Success deleted")
         } else {
             res.status(400).json("Not found product to delete")
@@ -99,8 +99,8 @@ const createProduct = async (req, res, next) => {
         if (!errors.isEmpty()) {
             if (locaFilePath) {
                 fs.unlinkSync(locaFilePath)
-            }            
-            return res.status(400).json({ errors: errors.array() })            
+            }
+            return res.status(400).json({ errors: errors.array() })
         }
 
         var user = req.user._id
@@ -173,7 +173,6 @@ const createProduct = async (req, res, next) => {
 // @desc update a product 
 // @route PUT /api/product/:id
 // @access Private admin
-// thieu validation
 // test roi
 const updateProduct = async (req, res, next) => {
     try {
@@ -184,14 +183,14 @@ const updateProduct = async (req, res, next) => {
         if (!errors.isEmpty()) {
             if (locaFilePath) {
                 fs.unlinkSync(locaFilePath)
-            }            
-            return res.status(400).json({ errors: errors.array() })            
+            }
+            return res.status(400).json({ errors: errors.array() })
         }
 
         var product = await Product.findById(idProduct)
 
         if (product) {
-    
+
             var { name,
                 price,
                 brand,
@@ -205,7 +204,7 @@ const updateProduct = async (req, res, next) => {
             if (brand) {
                 brand = brand.toLowerCase()
             }
-            
+
             var priceDiscount = req.body.priceDiscount || req.body.price
             var color = req.body.color || ""
             var operating = req.body.operating || ""
@@ -375,4 +374,48 @@ const filterProduct = async (req, res, next) => {
         return res.status(400).json("Not found product")
     }
 }
-export { getProduct, getProductById, deleteProductById, createProduct, updateProduct, reviewProduct, filterProduct }
+
+// @desc get product have same brand
+// @route get /api/product/same?brand=apple&
+// @access Public
+// test rồi
+const getSameProduct = async (req, res, next) => {
+    try {
+
+        var brand = req.query.brand
+        var id = req.query.id
+        var filterProduct = {}
+        const LIMIT_SIZE = 12
+
+        if (brand) {
+            if (brand.trim) {
+                brand = brand.trim()
+                brand = brand.toLowerCase()
+                filterProduct["brand"] = brand
+            }
+        }
+
+        var someProduct = await Product.find({ ...filterProduct }).limit(LIMIT_SIZE)
+        if (someProduct.length > 0) {
+            if (id != '') {
+                for (var i = 0; i < someProduct.length; i++) {
+                    if (someProduct[i]._id == id) {
+                        someProduct.splice(i, 1);
+                    }
+
+                }
+            }
+
+        }
+        if (someProduct.length > 0) {
+            return res.status(200).json(someProduct)
+        }
+
+        return res.status(400).json("Not found product same brand")
+
+    } catch (error) {
+        return res.status(400).json("Not found product same brand")
+    }
+}
+
+export { getProduct, getProductById, deleteProductById, createProduct, updateProduct, reviewProduct, filterProduct, getSameProduct }

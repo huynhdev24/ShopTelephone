@@ -154,8 +154,14 @@ const destroyOrder = async (req, res, next) => {
         var idOrder = req.params.id
         var order = await Order.findById(idOrder)
         if (order) {
+            let { orderProd } = order
+            let idProdOrder = orderProd.id
+            let { numOfProd } = order
             var orderAfterDestroy = await Order.findOneAndUpdate({ _id: idOrder }, { orderStatus: 6 }, { new: true })
             if (orderAfterDestroy) {
+                var productOrder = await Product.findById(idProdOrder)
+                productOrder.countInStock += numOfProd
+                await productOrder.save()
                 return res.status(200).json(orderAfterDestroy)
             } else {
                 return res.status(400).json("Not destroy order")
@@ -168,5 +174,6 @@ const destroyOrder = async (req, res, next) => {
         return res.status(400).json("Not destroy order")
     }
 }
+
 
 export { orderProduct, getOrderById, getMyOrder, getOrder, updateOrder, destroyOrder }

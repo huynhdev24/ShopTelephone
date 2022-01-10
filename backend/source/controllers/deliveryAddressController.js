@@ -145,4 +145,6 @@ const updateDeliveryAddress = async (req, res, next) => {
     }
 }
 
+// đặt địa chỉ làm mặc định
+
 export { createDeliveryAddress, getDeliveryAddressList, deleteDeliveryAddress, updateDeliveryAddress }
