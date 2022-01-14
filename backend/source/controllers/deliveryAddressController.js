@@ -64,14 +64,13 @@ const getDeliveryAddressList = async (req, res, next) => {
             return res.status(400).json("fail get list delivery address, try again")
         }
 
-
     } catch (error) {
         return res.status(400).json("fail get list delivery address, try again")
     }
 }
 
 // @desc create a delivery address
-// @route Delete /api/deliveryAddress/deleteDeliveryAddress
+// @route Delete /api/deliveryAddress/deleteDeliveryAddress?item=1
 // @access Private 
 
 const deleteDeliveryAddress = async (req, res, next) => {

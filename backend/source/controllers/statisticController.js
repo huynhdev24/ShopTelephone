@@ -121,7 +121,7 @@ const getProductBoughtByBrand = async (req, res, next) => {
     }
 }
 
-// @desc thong ke so luong don hang thanh cong theo thang dua vao day de biet thang nao co nhieu don hang nhat 
+// @desc thong ke so luong san pham thanh cong theo thang dua vao day de biet thang nao co nhieu don hang nhat 
 // @route GET /api/statistic/orderSuccessMonth?year=2021
 // @access admin
 const getNumOrderSuccesMonth = async (req, res, next) => {

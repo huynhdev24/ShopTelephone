@@ -9,6 +9,7 @@ import deliveryAddressRoutes from './routes/deliveryAddressRoutes.js'
 import cloudinary from 'cloudinary'
 import path from 'path'
 import bodyParser from "body-parser"
+import cors from "cors"
 
 // config file environment variable
 dotenv.config()
@@ -23,6 +24,7 @@ cloudinary.v2.config({
 connectDB()
 // instance express
 const app = express()
+app.use(cors())
 // middleware body-parser for req.body
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())

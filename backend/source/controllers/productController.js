@@ -68,20 +68,21 @@ const getProduct = async (req, res, next) => {
 const deleteProductById = async (req, res, next) => {
     try {
         var idProduct = req.params.id
+        console.log(idProduct)
         var product = await Product.findById(idProduct)
-
+        console.log(idProduct)
         if (product) {
-
+            console.log(idProduct)
             await Product.deleteOne({ _id: idProduct })
             await deleteFileInCloudinary(product.image)
 
-            res.status(200).json("Success deleted")
+            return res.status(200).json("Success deleted")
         } else {
-            res.status(400).json("Not found product to delete")
+            return res.status(400).json("Not found product to delete")
         }
 
     } catch (error) {
-        res.status(400).json("NOT DELETE")
+        return res.status(400).json("NOT DELETE")
     }
 }
 
@@ -132,9 +133,7 @@ const createProduct = async (req, res, next) => {
             fs.unlinkSync(locaFilePath)
             return res.status(400).json("Product exist, try again")
         }
-
         var result = await uploadToCloudinary(locaFilePath)
-
         var newProduct = await Product.create({
             user,
             name,
@@ -186,7 +185,6 @@ const updateProduct = async (req, res, next) => {
             }
             return res.status(400).json({ errors: errors.array() })
         }
-
         var product = await Product.findById(idProduct)
 
         if (product) {

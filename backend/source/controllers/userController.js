@@ -11,8 +11,8 @@ import bcrypt from 'bcryptjs'
 const loginUser = async (req, res, next) => {
     try {
         const errors = validationResult(req);
-        if (!errors.isEmpty()) {           
-            return res.status(400).json({ errors: errors.array() })            
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() })
         }
 
         var { email, password } = req.body
@@ -57,10 +57,10 @@ const loginUser = async (req, res, next) => {
 const resgisterUser = async (req, res, next) => {
     try {
         const errors = validationResult(req);
-        if (!errors.isEmpty()) {           
-            return res.status(400).json({ errors: errors.array() })            
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() })
         }
-        
+
         var { name, password, email, phoneNumber, address, gender } = req.body
 
         var user = await User.findOne({ email: email })
@@ -80,7 +80,7 @@ const resgisterUser = async (req, res, next) => {
         })
 
         if (newUser) {
-            res.status(200).json({
+            return res.status(200).json({
                 _id: newUser._id,
                 name: newUser.name,
                 email: newUser.email,
@@ -120,37 +120,43 @@ const profileUser = (req, res, next) => {
 
 const updateProfileUser = async (req, res, next) => {
     try {
-        
+
         const errors = validationResult(req);
-        if (!errors.isEmpty()) {           
-            return res.status(400).json({ errors: errors.array() })            
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() })
         }
-        
+
         var { name, email, password } = req.body
         var address = req.body.address || ""
         var phoneNumber = req.body.phoneNumber || ""
         var gender = req.body.gender || false
 
+        var user = await User.findOne({ email: email })
+
+        if (user) {
+            return res.status(400).json("Acount exist")
+        }
+
         var idUserUpdate = req.user._id
 
         var userAfterUpdate = await User.findOneAndUpdate(
-                                                            {
-                                                                _id: idUserUpdate
-                                                            },
-                                                            {
-                                                                name,
-                                                                email,
-                                                                address,
-                                                                phoneNumber,
-                                                                gender,
-                                                                password: bcrypt.hashSync(password, 10)
-                                                            },
-                                                            {
-                                                                new: true
-                                                            }
-                                                        )
+            {
+                _id: idUserUpdate
+            },
+            {
+                name,
+                email,
+                address,
+                phoneNumber,
+                gender,
+                password: bcrypt.hashSync(password, 10)
+            },
+            {
+                new: true
+            }
+        )
 
-        res.status(200).json({
+        return res.status(200).json({
             _id: userAfterUpdate._id,
             name: userAfterUpdate.name,
             email: userAfterUpdate.email,
@@ -162,7 +168,7 @@ const updateProfileUser = async (req, res, next) => {
         })
 
     } catch (error) {
-        res.status(400).json("Not update")
+        return res.status(400).json("Not update")
     }
 }
 
@@ -201,10 +207,10 @@ const getAllUsers = async (req, res, next) => {
             return res.status(200).json({ getUsers, pageNumber, totalPage: Math.ceil(count / PAGE_SIZE) })
 
         } else {
-            return res.status(404).json("NOT FOUND")
+            return res.status(400).json("NOT FOUND")
         }
     } catch (error) {
-        return res.status(404).json("NOT FOUND")
+        return res.status(400).json("NOT FOUND")
     }
 }
 
@@ -263,13 +269,13 @@ const getAllOrderOfUser = async (req, res, next) => {
         var id = req.params.id
         var orderOfUser = await Order.find({ user: id })
         if (orderOfUser.length > 0) {
-            res.status(200).json(orderOfUser)
+            return res.status(200).json(orderOfUser)
         } else {
-            res.status(400).json("Not found order")
+            return res.status(400).json("Not found order")
         }
 
     } catch (error) {
-        res.status(400).json("Not found order")
+        return res.status(400).json("Not found order")
     }
 }
 
