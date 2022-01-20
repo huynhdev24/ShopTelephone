@@ -24,7 +24,10 @@ cloudinary.v2.config({
 connectDB()
 // instance express
 const app = express()
+
+// cors
 app.use(cors())
+
 // middleware body-parser for req.body
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
