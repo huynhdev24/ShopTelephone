@@ -65,7 +65,7 @@ const orderProduct = async (req, res, next) => {
 const getOrderById = async (req, res, next) => {
     try {
         var id = req.params.id
-        var order = await Order.findById({ _id: id }).select('-_id -user')
+        var order = await Order.findById({ _id: id }).select('-user')
         if (order) {
             return res.status(200).json(order)
         } else {

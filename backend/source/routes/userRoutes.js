@@ -5,13 +5,13 @@ import { validate } from '../middleware/validationMiddleware.js'
 
 const router = express.Router()
 
-router.post('/login', validate('loginUser'), loginUser)
-router.get('/', checkLogin, checkAdmin, getAllUsers)
+router.post('/login', loginUser)
+router.get('/', checkLogin, getAllUsers)
 
 router.post('/resgister', validate('informationUser'), resgisterUser)
 router.get('/profile', checkLogin, profileUser)
 
-router.put('/profile', checkLogin, validate('informationUser'), updateProfileUser)
+router.put('/profile', checkLogin, updateProfileUser)
 
 router.get('/order/:id', checkLogin, checkAdmin, getAllOrderOfUser)
 router.get('/:id', checkLogin, checkAdmin, getUserById)

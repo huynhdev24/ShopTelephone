@@ -126,18 +126,18 @@ const updateProfileUser = async (req, res, next) => {
             return res.status(400).json({ errors: errors.array() })
         }
 
-        var { name, email, password } = req.body
+        var { userId, name } = req.body
         var address = req.body.address || ""
         var phoneNumber = req.body.phoneNumber || ""
         var gender = req.body.gender || false
 
-        var user = await User.findOne({ email: email })
+        var user = await User.findOne({ _id: userId })
 
-        if (user) {
-            return res.status(400).json("Acount exist")
+        if (!user) {
+            return res.status(400).json("Account not exist")
         }
 
-        var idUserUpdate = req.user._id
+        var idUserUpdate = userId
 
         var userAfterUpdate = await User.findOneAndUpdate(
             {
@@ -145,11 +145,9 @@ const updateProfileUser = async (req, res, next) => {
             },
             {
                 name,
-                email,
                 address,
                 phoneNumber,
-                gender,
-                password: bcrypt.hashSync(password, 10)
+                gender
             },
             {
                 new: true

@@ -8,6 +8,7 @@ const orderSchema = mongoose.Schema(
       name: { type: String, required: true },
       price: { type: Number, required: true },
       priceDiscount: { type: Number },
+      discount: { type: String },
       id: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Product' }
     },
     // số lượng

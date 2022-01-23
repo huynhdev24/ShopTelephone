@@ -26,7 +26,10 @@ connectDB()
 const app = express()
 
 // cors
-app.use(cors())
+app.use(cors({
+  origin: `http://localhost:8080`,  //react's address
+  credentials: true
+}))
 
 // middleware body-parser for req.body
 app.use(bodyParser.urlencoded({ extended: false }))

@@ -60,9 +60,9 @@ const getDeliveryAddressList = async (req, res, next) => {
         var deliveryAddressList = await DeliveryAddress.findOne({ user: user }).select("-user -_id")
         if (deliveryAddressList) {
             return res.status(200).json(deliveryAddressList)
-        } else {
-            return res.status(400).json("fail get list delivery address, try again")
         }
+
+        return res.status(200).json({"list": []})
 
     } catch (error) {
         return res.status(400).json("fail get list delivery address, try again")
