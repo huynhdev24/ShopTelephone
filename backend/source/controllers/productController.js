@@ -38,23 +38,34 @@ const getProduct = async (req, res, next) => {
             }
             : {}
 
-        var pageNumber = parseInt(req.query.pageNumber) || 1
-        const PAGE_SIZE = 2
-        if (pageNumber < 1) {
-            pageNumber = 1
-        }
+        if (req.query.pageNumber) {
+            var pageNumber = parseInt(req.query.pageNumber) || 1
+            const PAGE_SIZE = 20
+            if (pageNumber < 1) {
+                pageNumber = 1
+            }
 
-        var count = await Product.count({ ...nameProduct })
-        var someProduct = await Product.find({ ...nameProduct })
-            .limit(PAGE_SIZE)
-            .skip((pageNumber - 1) * PAGE_SIZE)
+            var count = await Product.count({ ...nameProduct })
+            var someProduct = await Product.find({ ...nameProduct })
+                .limit(PAGE_SIZE)
+                .skip((pageNumber - 1) * PAGE_SIZE)
 
-        if (someProduct) {
-            return res.status(200).json({ someProduct, pageNumber, totalPage: Math.ceil(count / PAGE_SIZE) })
+            if (someProduct) {
+                return res.status(200).json({ someProduct, pageNumber, totalPage: Math.ceil(count / PAGE_SIZE) })
 
+            } else {
+                return res.status(400).json("NOT FOUND")
+            }
         } else {
-            return res.status(400).json("NOT FOUND")
+            var someProduct = await Product.find({ ...nameProduct })
+            if (someProduct) {
+                return res.status(200).json({ someProduct })
+
+            } else {
+                return res.status(400).json("NOT FOUND")
+            }
         }
+
     } catch (error) {
         return res.status(400).json("NOT FOUND")
     }

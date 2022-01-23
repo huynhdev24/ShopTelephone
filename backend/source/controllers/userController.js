@@ -193,7 +193,7 @@ const getAllUsers = async (req, res, next) => {
 
 
         var pageNumber = parseInt(req.query.pageNumber) || 1
-        const PAGE_SIZE = 2
+        const PAGE_SIZE = 100
         if (pageNumber < 1) {
             pageNumber = 1
         }
