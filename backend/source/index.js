@@ -25,8 +25,16 @@ connectDB()
 // instance express
 const app = express()
 
-// cors
-app.use(cors())
+// // cors
+// app.use(cors())
+
+app.use(function(req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  next();
+});
 
 // middleware body-parser for req.body
 app.use(bodyParser.urlencoded({ extended: false }))
