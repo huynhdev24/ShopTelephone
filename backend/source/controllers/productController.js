@@ -303,7 +303,7 @@ const reviewProduct = async (req, res, next) => {
                     rating: Number(rating),
                     comment
                 }
-
+                
                 product.reviews.push(newReview)
                 product.numReviews = product.reviews.length
 
@@ -314,6 +314,7 @@ const reviewProduct = async (req, res, next) => {
                 }
                 product.rating = sumRating / product.numReviews
 
+                product.rate[newReview.rating - 1] += 1
                 await product.save()
 
                 return res.status(200).json("review added")
@@ -352,7 +353,7 @@ const filterProduct = async (req, res, next) => {
 
         if (ram) {
             if (ram.trim()) {
-                ram = ram.trim().split(",")
+                ram = ram.trim().split(";")
                 for (let i = 0; i < ram.length; i++) {
                     ram[i] = Number(ram[i])
                 }
@@ -365,7 +366,7 @@ const filterProduct = async (req, res, next) => {
 
         if (rom) {
             if (rom.trim()) {
-                rom = rom.trim().split(",")
+                rom = rom.trim().split(";")
                 for (let i = 0; i < rom.length; i++) {
                     rom[i] = Number(rom[i])
                 }
