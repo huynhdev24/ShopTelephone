@@ -5,7 +5,7 @@ import Product from '../models/productModel.js'
 // @desc statistic revenue of store by year (with number year is in query)
 // @route GET /api/statistic/revenue?numYear=5
 // @access admin
-
+// test roi cho dang phan van cho oder status == 6 
 const getRevenue = async (req, res, next) => {
     try {
         var numYear = req.query.numYear || 5
@@ -40,7 +40,7 @@ const getRevenue = async (req, res, next) => {
 // @desc statistic number product of store by brand and number product in stock by brand
 // @route GET /api/statistic/productBrand
 // @access admin
-
+// test roi
 const getProductByBrand = async (req, res, next) => {
     try {
 
@@ -76,7 +76,10 @@ const getProductByBrand = async (req, res, next) => {
 // @desc statistic revenue, number product is bought by brand 
 // @route GET /api/statistic/productBoughtBrand
 // @access admin
-
+// test roi nhung co the toi uu duoc code hon bang cach cho find product by id bao trong phan check order status == 6 
+// boi vi neu order status ma khong bang 6 thi ta loai luon ko can phai find lam gi cho met
+// van de thu 2 la co nhung san pham da xoa di nen don hang trung voi nhung san pham ay ko dc tinh
+// test ok voi truong hop tren
 const getProductBoughtByBrand = async (req, res, next) => {
     try {
 
@@ -88,7 +91,7 @@ const getProductBoughtByBrand = async (req, res, next) => {
             for (let index = 0; index < allOrders.length; index++) {
                 var idProduct = allOrders[index].orderProd.id
                 var product = await Product.findById({ _id: idProduct })
-
+                console.log("product ===================================================", product)
                 if (product) {
 
                     let brand = product.brand
@@ -124,6 +127,8 @@ const getProductBoughtByBrand = async (req, res, next) => {
 // @desc thong ke so luong san pham thanh cong theo thang dua vao day de biet thang nao co nhieu don hang nhat 
 // @route GET /api/statistic/orderSuccessMonth?year=2021
 // @access admin
+// test roi
+// gap van de voi api phia tren la nhung truong hop san pham bi xoa roi nhung van tinh vao day con tren thi khong
 const getNumOrderSuccesMonth = async (req, res, next) => {
     try {
 
@@ -200,6 +205,7 @@ const getRevenueMonth = async (req, res, next) => {
 // @desc thong ke so luong user dang ki tai khoan theo thang 
 // @route GET /api/statistic/registerUser?year=2021
 // @access admin
+// test roi 
 const getNumRegisUser = async (req, res, next) => {
     try {
 

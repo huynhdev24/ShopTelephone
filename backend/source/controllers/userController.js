@@ -7,7 +7,7 @@ import bcrypt from 'bcryptjs'
 // @desc    Auth user & get token
 // @route   POST /api/user/login
 // @access  Public
-// test rồi
+// test roi
 const loginUser = async (req, res, next) => {
     try {
         const errors = validationResult(req);
@@ -22,24 +22,22 @@ const loginUser = async (req, res, next) => {
             // day phai dung await vi ket qua cua ham tra ve la
             // mot promise (do dung ham async trong ham matchPassword)
             // neu khong dung await thi temp se la mot promise dc thuc hien sau
-            var checkPassword = await user.matchPassword(password)
-            // console.log("ket qua check", checkPassword)
-            if (user && checkPassword) {
-                res.json({
-                    _id: user._id,
-                    name: user.name,
-                    email: user.email,
-                    isAdmin: user.isAdmin,
-                    address: user.address,
-                    phoneNumber: user.phoneNumber,
-                    gender: user.gender,
-                    token: generateToken(user._id),
-                })
+            if (user) {
+                var checkPassword = await user.matchPassword(password)
+                if (user && checkPassword) {
+                    return res.status(200).json({
+                        _id: user._id,
+                        name: user.name,
+                        email: user.email,
+                        isAdmin: user.isAdmin,
+                        address: user.address,
+                        phoneNumber: user.phoneNumber,
+                        gender: user.gender,
+                        token: generateToken(user._id),
+                    })
+                }
             }
-            else {
-                return res.status(400).json("Invalid name or password")
-            }
-
+            return res.status(400).json("Invalid email or password")
         } else {
             return res.status(400).json("You have to fill complete information")
         }
@@ -53,7 +51,7 @@ const loginUser = async (req, res, next) => {
 // @desc    resgis new user
 // @route   POST /api/user/resgister
 // @access  public
-// test rồi
+// test roi
 const resgisterUser = async (req, res, next) => {
     try {
         const errors = validationResult(req);
@@ -103,21 +101,21 @@ const resgisterUser = async (req, res, next) => {
 // @desc    get profile user
 // @route   GET /api/user/profile
 // @access  private
-// test rồi
+// test roi
 const profileUser = (req, res, next) => {
 
 
     if (req.user) {
-        res.status(200).json(req.user)
+        return res.status(200).json(req.user)
     } else {
-        res.status(400).json("Not found profile user")
+        return res.status(400).json("Not found profile user")
     }
 }
 
 // @desc    update profile user
 // @route   PUT /api/user/profile
 // @access  private
-
+// test roi
 const updateProfileUser = async (req, res, next) => {
     try {
 
@@ -174,7 +172,8 @@ const updateProfileUser = async (req, res, next) => {
 // @desc    get all users
 // @route   GET /api/user?name=name&pageNumber=1
 // @access  private admin
-// test rồi
+// test roi
+// nen sua lai cho truong hop neu co pageNumber thi moi thuc hien phan trang con khong co pageNumber thi se tra ve het du lieu nhu ben product
 const getAllUsers = async (req, res, next) => {
     try {
         // thieu validation
@@ -215,7 +214,7 @@ const getAllUsers = async (req, res, next) => {
 // @desc    get user by id
 // @route   GET /api/user/:id
 // @access  private admin
-// test rồi
+// test roi
 const getUserById = async (req, res, next) => {
     try {
         var id = req.params.id
@@ -233,12 +232,12 @@ const getUserById = async (req, res, next) => {
 // @desc    accept user to admin
 // @route   PUT /api/user/:id
 // @access  private admin
-// test rồi
+// test roi
 const acceptAdmin = async (req, res, next) => {
     try {
         var id = req.params.id
 
-        var user = await User.findById(id)
+        var user = await User.findById(id)  
 
         if (user) {
             var userAfterUpdate = await User.findOneAndUpdate({ _id: id }, { isAdmin: true }, { new: true })
@@ -261,7 +260,7 @@ const acceptAdmin = async (req, res, next) => {
 // @desc    get all order of one user by admin
 // @route   GET /api/user/order/:id
 // @access  private admin
-// test rồi
+
 const getAllOrderOfUser = async (req, res, next) => {
     try {
         var id = req.params.id

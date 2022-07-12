@@ -4,7 +4,7 @@ import { validationResult } from 'express-validator';
 // @desc create a delivery address
 // @route POST /api/deliveryAddress
 // @access Private 
-
+// test roi
 const createDeliveryAddress = async (req, res, next) => {
     try {
 
@@ -52,7 +52,7 @@ const createDeliveryAddress = async (req, res, next) => {
 // @desc create a delivery address
 // @route Get /api/deliveryAddress
 // @access Private 
-
+// test roi
 const getDeliveryAddressList = async (req, res, next) => {
     try {
 
@@ -72,7 +72,7 @@ const getDeliveryAddressList = async (req, res, next) => {
 // @desc create a delivery address
 // @route Delete /api/deliveryAddress/deleteDeliveryAddress?item=1
 // @access Private 
-
+// test roi
 const deleteDeliveryAddress = async (req, res, next) => {
     try {
 
@@ -106,7 +106,7 @@ const deleteDeliveryAddress = async (req, res, next) => {
 // @desc update a delivery address
 // @route PUT /api/deliveryAddress/:item
 // @access Private 
-
+// test roi
 const updateDeliveryAddress = async (req, res, next) => {
     try {
         

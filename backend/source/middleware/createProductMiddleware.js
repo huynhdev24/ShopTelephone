@@ -10,7 +10,7 @@ var multerStorage = multer.diskStorage({
 
     const ext = file.mimetype.split("/")[1];
     const nameFile = file.originalname.split(".")[0]
-    console.log(nameFile, )
+    console.log(nameFile)
     cb(null, `${nameFile}-${Date.now()}.${ext}`);
   }
 })
@@ -60,16 +60,13 @@ const updateFile = (req, res, next) => {
   up(req, res, function (err) {
     if (req.file) {
       if (err instanceof multer.MulterError) {
-        res.status(400).json("error upload file")
+        res.status(400).json("error upload file 1")
       } else if (err) {
-        res.status(400).json("error upload file")
+        res.status(400).json("error upload file 2")
       }
-      // Everything went fine. 
-      next()
-    } else {
-      res.status(400).json("error upload file")
     }
 
+    next()
   })
 }
 

@@ -6,6 +6,11 @@ import { validationResult } from 'express-validator';
 // @access private
 //  test rồi
 // chú ý tới cái ảnh
+
+// neu co thoi gian thi nen cai thien lai doan code nay cho truong hop neu mot san pham khong duoc tao don hang
+// thi tat ca san pham cung khong duoc tao don hang
+
+// dang co van de voi phi van chuyen (chua co cach tinh phi van chuyen phu hop)
 const orderProduct = async (req, res, next) => {
     try {
         const errors = validationResult(req);
@@ -62,6 +67,7 @@ const orderProduct = async (req, res, next) => {
 // @route GET /api/order/:id
 // @access private
 // test rồi
+// neu co thoi gian thi khong cho mot nhieu co the xem don hang cua nguoi khac
 const getOrderById = async (req, res, next) => {
     try {
         var id = req.params.id

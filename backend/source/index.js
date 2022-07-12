@@ -27,7 +27,7 @@ const app = express();
 // cors
 app.use(
   cors({
-    origin: `http://localhost:8080`, //react's address
+    origin: [`http://localhost:8080`, `http://localhost:3000`], //react's address
     credentials: true,
   })
 );
