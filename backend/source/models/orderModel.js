@@ -59,6 +59,10 @@ const orderSchema = mongoose.Schema(
     // 1 - thanh toán qua VNPay
     paymentMethod: { type: Number, required: true, enum: [0, 1], default: 0 },
 
+    // da nhan xet chua
+    // true, false
+    isReview: {type: Boolean, required: true, default: false,},
+
     isPaid: { type: Boolean, required: true, default: false, },
     paidAt: { type: Date, },
 

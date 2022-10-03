@@ -47,7 +47,6 @@ const loginUser = async (req, res, next) => {
     }
 }
 
-
 // @desc    resgis new user
 // @route   POST /api/user/resgister
 // @access  public
@@ -104,7 +103,6 @@ const resgisterUser = async (req, res, next) => {
 // test roi
 const profileUser = (req, res, next) => {
 
-
     if (req.user) {
         return res.status(200).json(req.user)
     } else {
@@ -128,9 +126,10 @@ const updateProfileUser = async (req, res, next) => {
         var address = req.body.address || ""
         var phoneNumber = req.body.phoneNumber || ""
         var gender = req.body.gender || false
+        var email = req.body.email 
 
         var user = await User.findOne({ _id: userId })
-
+       
         if (!user) {
             return res.status(400).json("Account not exist")
         }
@@ -145,7 +144,8 @@ const updateProfileUser = async (req, res, next) => {
                 name,
                 address,
                 phoneNumber,
-                gender
+                gender,
+                email,
             },
             {
                 new: true
@@ -168,7 +168,6 @@ const updateProfileUser = async (req, res, next) => {
     }
 }
 
-
 // @desc    get all users
 // @route   GET /api/user?name=name&pageNumber=1
 // @access  private admin
@@ -188,20 +187,20 @@ const getAllUsers = async (req, res, next) => {
             }
             : {}
 
-
-        var pageNumber = parseInt(req.query.pageNumber) || 1
-        const PAGE_SIZE = 100
+        let pageNumber = parseInt(req.query.pageNumber) || 1
+        let pageSize = parseInt(req.query.limit) || 10
+        
         if (pageNumber < 1) {
             pageNumber = 1
         }
-
+       
         var count = await User.count({ ...nameUser })
         var getUsers = await User.find({ ...nameUser })
-            .limit(PAGE_SIZE)
-            .skip((pageNumber - 1) * PAGE_SIZE)
-
+            .limit(pageSize)
+            .skip((pageNumber - 1) * pageSize)
+        
         if (getUsers) {
-            return res.status(200).json({ getUsers, pageNumber, totalPage: Math.ceil(count / PAGE_SIZE) })
+            return res.status(200).json({ getUsers, pageNumber, totalPage: Math.ceil(count / pageSize), totalRow: count })
 
         } else {
             return res.status(400).json("NOT FOUND")
@@ -275,6 +274,5 @@ const getAllOrderOfUser = async (req, res, next) => {
         return res.status(400).json("Not found order")
     }
 }
-
 
 export { loginUser, profileUser, resgisterUser, updateProfileUser, getAllUsers, getUserById, acceptAdmin, getAllOrderOfUser }

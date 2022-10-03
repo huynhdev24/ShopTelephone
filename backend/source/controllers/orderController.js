@@ -29,8 +29,8 @@ const orderProduct = async (req, res, next) => {
 
         let response = {};
         for (let i = 0; i < productList.length; ++i) {
-            const { orderProd, numOfProd } = productList[i];
-            const product = await Product.findById(orderProd.id);
+            const { orderProd, numOfProd } = productList[i]
+            const product = await Product.findById(orderProd.id)
             if (product) {
                 if (product.countInStock < numOfProd) {
                     return res.status(400).json("Number product in stock is not enough")

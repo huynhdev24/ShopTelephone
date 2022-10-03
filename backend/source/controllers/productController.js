@@ -38,33 +38,25 @@ const getProduct = async (req, res, next) => {
             }
             : {}
 
-        if (req.query.pageNumber) {
-            var pageNumber = parseInt(req.query.pageNumber) || 1
-            const PAGE_SIZE = 20
-            if (pageNumber < 1) {
-                pageNumber = 1
-            }
-
-            var count = await Product.count({ ...nameProduct })
-            var someProduct = await Product.find({ ...nameProduct })
-                .limit(PAGE_SIZE)
-                .skip((pageNumber - 1) * PAGE_SIZE)
-
-            if (someProduct) {
-                return res.status(200).json({ someProduct, pageNumber, totalPage: Math.ceil(count / PAGE_SIZE) })
-
-            } else {
-                return res.status(400).json("NOT FOUND")
-            }
-        } else {
-            var someProduct = await Product.find({ ...nameProduct })
-            if (someProduct) {
-                return res.status(200).json({ someProduct })
-
-            } else {
-                return res.status(400).json("NOT FOUND")
-            }
+        let pageNumber = parseInt(req.query.pageNumber) || 1
+        let pageSize = parseInt(req.query.limit) || 10
+        
+        if (pageNumber < 1) {
+            pageNumber = 1
         }
+
+        var count = await Product.count({ ...nameProduct })
+        var someProduct = await Product.find({ ...nameProduct })
+            .limit(pageSize)
+            .skip((pageNumber - 1) * pageSize)
+
+        if (someProduct) {
+            return res.status(200).json({ someProduct, pageNumber, totalPage: Math.ceil(count / pageSize), totalRow: count })
+
+        } else {
+            return res.status(400).json("NOT FOUND")
+        }
+
 
     } catch (error) {
         return res.status(400).json("NOT FOUND")
@@ -79,11 +71,11 @@ const getProduct = async (req, res, next) => {
 const deleteProductById = async (req, res, next) => {
     try {
         var idProduct = req.params.id
-        console.log(idProduct)
+
         var product = await Product.findById(idProduct)
-        console.log(idProduct)
+
         if (product) {
-            console.log(idProduct)
+
             await Product.deleteOne({ _id: idProduct })
             await deleteFileInCloudinary(product.image)
 
@@ -171,7 +163,6 @@ const createProduct = async (req, res, next) => {
         });
 
         if (newProduct) {
-
             return res.status(200).json(newProduct)
         } else {
             return res.status(400).json("Not create product, try again")
@@ -188,7 +179,6 @@ const createProduct = async (req, res, next) => {
             }
         }
 
-
         return res.status(400).json("Not create product..............., try again")
     }
 }
@@ -203,7 +193,7 @@ const updateProduct = async (req, res, next) => {
         if (req.file) {
             var locaFilePath = req.file.path
 
-            const errors = validationResult(req);
+            const errors = validationResult(req);   
             if (!errors.isEmpty()) {
                 if (locaFilePath) {
                     fs.unlinkSync(locaFilePath)
@@ -280,12 +270,11 @@ const updateProduct = async (req, res, next) => {
                 return res.status(400).json("Not update product")
             }
         } else {
-            
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
                 return res.status(400).json({ errors: errors.array() })
             }
-            
+
             var product = await Product.findById(idProduct)
 
             if (product) {
@@ -345,8 +334,6 @@ const updateProduct = async (req, res, next) => {
                 return res.status(400).json("Not update product")
             }
         }
-
-
     } catch (error) {
         // neu ton tai file thi anh thi xoa
         res.status(400).json("Not update product")

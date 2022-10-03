@@ -10,7 +10,7 @@ var multerStorage = multer.diskStorage({
 
     const ext = file.mimetype.split("/")[1];
     const nameFile = file.originalname.split(".")[0]
-    console.log(nameFile)
+    
     cb(null, `${nameFile}-${Date.now()}.${ext}`);
   }
 })

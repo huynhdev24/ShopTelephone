@@ -22,7 +22,7 @@ const getRevenue = async (req, res, next) => {
             for (let index = 0; index < allOrders.length; index++) {
                 let yearIndex = allOrders[index].createdAt.getFullYear()
                 if ((yearIndex in revenueYear) && (allOrders[index].orderStatus == 6)) {
-                    console.log(typeof (revenueYear[yearIndex]))
+                    
                     revenueYear[yearIndex] += (allOrders[index].numOfProd * allOrders[index].orderProd.priceDiscount + allOrders[index].transportFee)
                 }
             }
@@ -35,7 +35,6 @@ const getRevenue = async (req, res, next) => {
         return res.status(400).json("not statistic revenue")
     }
 }
-
 
 // @desc statistic number product of store by brand and number product in stock by brand
 // @route GET /api/statistic/productBrand
@@ -91,7 +90,7 @@ const getProductBoughtByBrand = async (req, res, next) => {
             for (let index = 0; index < allOrders.length; index++) {
                 var idProduct = allOrders[index].orderProd.id
                 var product = await Product.findById({ _id: idProduct })
-                console.log("product ===================================================", product)
+                
                 if (product) {
 
                     let brand = product.brand
@@ -186,7 +185,7 @@ const getRevenueMonth = async (req, res, next) => {
             orderStatus: 6,
         })
 
-        console.log("=======================================")
+        
         if (allOrders) {
             for (let index = 0; index < allOrders.length; index++) {
                 let monthIndex = allOrders[index].createdAt.getMonth()
