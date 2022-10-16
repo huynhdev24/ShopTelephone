@@ -14,8 +14,8 @@ import { validationResult } from 'express-validator';
 const orderProduct = async (req, res, next) => {
     try {
         const errors = validationResult(req);
-        if (!errors.isEmpty()) {          
-            return res.status(400).json({ errors: errors.array() })            
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() })
         }
         var user = req.user._id
         var { productList,
@@ -90,7 +90,7 @@ const getOrderById = async (req, res, next) => {
 // cần lấy thêm về theo thể loại nữa
 const getMyOrder = async (req, res, next) => {
     try {
-       
+
         var orders = await Order.find({ user: req.user._id })
         if (orders.length > 0) {
             return res.status(200).json(orders)
@@ -103,20 +103,43 @@ const getMyOrder = async (req, res, next) => {
 }
 
 // @desc Get all orders by admin
-// @route GET /api/orders
+// @route GET /api/orders?name=name&pageNumber=1&limit=10
 // @access private admin
 // test rồi 
 //cân them cái lấy về theo thể loại nữa
 const getOrder = async (req, res, next) => {
+
     try {
-        var allOrders = await Order.find()
-        if (allOrders) {
-            res.status(200).json(allOrders)
-        } else {
-            res.status(400).json("Do not have order")
+        var nameOrder = req.query.name
+            ? {
+                'orderProd.name': {
+                    $regex: req.query.name,
+                    $options: 'i',
+                }
+
+            }
+            : {}
+
+        let pageNumber = parseInt(req.query.pageNumber) || 1
+        let pageSize = parseInt(req.query.limit) || 10
+
+        if (pageNumber < 1) {
+            pageNumber = 1
         }
+
+        var count = await Order.count({ ...nameOrder })
+        var someOrder = await Order.find({ ...nameOrder })
+            .limit(pageSize)
+            .skip((pageNumber - 1) * pageSize)
+
+        if (someOrder) {
+            return res.status(200).json({ someOrder, pageNumber, totalPage: Math.ceil(count / pageSize), totalRow: count })
+        } else {
+            return res.status(400).json("Not found list orders")
+        }
+
     } catch (error) {
-        res.status(400).json("ORDER NOT FOUND")
+        res.status(400).json("Not found list order")
     }
 }
 

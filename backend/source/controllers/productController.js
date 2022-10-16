@@ -23,7 +23,7 @@ const getProductById = async (req, res, next) => {
 }
 
 // @desc Fetch all product
-// @route GET /api/product?name=name&pageNumber=1
+// @route GET /api/product?name=name&pageNumber=1&limit=10
 // @access Public
 // test roi
 const getProduct = async (req, res, next) => {
@@ -135,7 +135,7 @@ const createProduct = async (req, res, next) => {
         var productExist = await Product.find({ name: name })
         if (productExist.length > 0) {
             fs.unlinkSync(locaFilePath)
-            return res.status(400).json("Product exist, try again")
+            return res.status(401).json("Product exist, try again")
         }
 
         result = await uploadToCloudinary(locaFilePath)
@@ -327,7 +327,6 @@ const updateProduct = async (req, res, next) => {
                     {
                         new: true
                     })
-
 
                 return res.status(200).json(productAfterUpdate)
             } else {
