@@ -1,4 +1,4 @@
-import Order from '../models/orderModel.js'
+﻿import Order from '../models/orderModel.js'
 import Product from '../models/productModel.js'
 import { validationResult } from 'express-validator';
 // @desc Order product
@@ -103,22 +103,31 @@ const getMyOrder = async (req, res, next) => {
 }
 
 // @desc Get all orders by admin
-// @route GET /api/orders?name=name&pageNumber=1&limit=10
+// @route GET /api/orders?name=name&pageNumber=1&limit=10&type=statusOrder
 // @access private admin
 // test rồi 
-//cân them cái lấy về theo thể loại nữa
+//cân them cái lấy về theo thể loại nữa (da bo sung)
 const getOrder = async (req, res, next) => {
 
     try {
-        var nameOrder = req.query.name
-            ? {
-                'orderProd.name': {
-                    $regex: req.query.name,
-                    $options: 'i',
-                }
 
+        var filterOrder = {}
+
+        var type = parseInt(req.query.type) || -1
+        if (parseInt(req.query.type) === 0) {
+            type = 0
+        }
+
+        if (type > -1) {
+            filterOrder["orderStatus"] = type
+        }
+
+        if (req.query.name) {
+            filterOrder['orderProd.name'] = {
+                $regex: req.query.name,
+                $options: 'i',
             }
-            : {}
+        }
 
         let pageNumber = parseInt(req.query.pageNumber) || 1
         let pageSize = parseInt(req.query.limit) || 10
@@ -127,8 +136,8 @@ const getOrder = async (req, res, next) => {
             pageNumber = 1
         }
 
-        var count = await Order.count({ ...nameOrder })
-        var someOrder = await Order.find({ ...nameOrder })
+        var count = await Order.count({ ...filterOrder })
+        var someOrder = await Order.find({ ...filterOrder })
             .limit(pageSize)
             .skip((pageNumber - 1) * pageSize)
 
@@ -150,6 +159,7 @@ const getOrder = async (req, res, next) => {
 // trạng thái đơn hàng
 // 0 - Đặt hàng thành công, 1 - đã tiếp nhận đơn hàng, 2 - Chuẩn bị hàng
 // 3 - Bàn giao vận chuyển, 4 - Đang vận chuyển, 5 - Giao hàng thành công 6 - Hủy đơn hàng
+
 const updateOrder = async (req, res, next) => {
     try {
         var idOrder = req.params.id
@@ -171,6 +181,10 @@ const updateOrder = async (req, res, next) => {
     }
 }
 
+// 0 don hang cho xac nhan
+// 1 don hang cho lay hang
+// 2 don hang cho ban giao cho ben van chuyen
+// 3 don hang cho van chuyen
 // @desc destroy order
 // @route PUT /api/order/:id/destroy
 // @access private (user)
