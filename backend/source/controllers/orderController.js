@@ -84,24 +84,69 @@ const getOrderById = async (req, res, next) => {
 }
 
 // @desc Get logged in user orders
-// @route GET /api/orders/myorders
+// @route GET /api/orders/myorders?name=name&pageNumber=1&limit=10&type=statusOrder
 // @access private
 // test rồi
 // cần lấy thêm về theo thể loại nữa
 const getMyOrder = async (req, res, next) => {
     try {
 
-        var orders = await Order.find({ user: req.user._id })
-        if (orders.length > 0) {
-            return res.status(200).json(orders)
-        } else {
-            return res.status(400).json("You do not have order")
+        var filterOrder = {}
+
+        filterOrder["user"] = req.user._id
+
+        var type = parseInt(req.query.type) || -1
+        if (parseInt(req.query.type) === 0) {
+            type = 0
         }
+
+        if (type > -1) {
+            filterOrder["orderStatus"] = type
+        }
+
+        if (req.query.name) {
+            filterOrder['orderProd.name'] = {
+                $regex: req.query.name,
+                $options: 'i',
+            }
+        }
+
+        let pageNumber = parseInt(req.query.pageNumber) || 1
+        let pageSize = parseInt(req.query.limit) || 10
+
+        if (pageNumber < 1) {
+            pageNumber = 1
+        }
+
+        var count = await Order.count({ ...filterOrder })
+        var someOrder = await Order.find({ ...filterOrder })
+            .limit(pageSize)
+            .skip((pageNumber - 1) * pageSize)
+
+        if (someOrder) {
+            return res.status(200).json({ someOrder, pageNumber, totalPage: Math.ceil(count / pageSize), totalRow: count })
+        } else {
+            return res.status(400).json("Not found list orders")
+        }
+
     } catch (error) {
         res.status(400).json("ORDER NOT FOUND")
     }
 }
 
+// const getMyOrder = async (req, res, next) => {
+//     try {
+
+//         var orders = await Order.find({ user: req.user._id })
+//         if (orders.length > 0) {
+//             return res.status(200).json(orders)
+//         } else {
+//             return res.status(400).json("You do not have order")
+//         }
+//     } catch (error) {
+//         res.status(400).json("ORDER NOT FOUND")
+//     }
+// }
 // @desc Get all orders by admin
 // @route GET /api/orders?name=name&pageNumber=1&limit=10&type=statusOrder
 // @access private admin
