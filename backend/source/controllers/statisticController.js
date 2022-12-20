@@ -21,7 +21,7 @@ const getRevenue = async (req, res, next) => {
         if (allOrders) {
             for (let index = 0; index < allOrders.length; index++) {
                 let yearIndex = allOrders[index].createdAt.getFullYear()
-                if ((yearIndex in revenueYear) && (allOrders[index].orderStatus == 6)) {
+                if ((yearIndex in revenueYear) && (allOrders[index].orderStatus == 5)) {
                     
                     revenueYear[yearIndex] += (allOrders[index].numOfProd * allOrders[index].orderProd.priceDiscount + allOrders[index].transportFee)
                 }
@@ -95,7 +95,7 @@ const getProductBoughtByBrand = async (req, res, next) => {
 
                     let brand = product.brand
 
-                    if (allOrders[index].orderStatus == 6) {
+                    if (allOrders[index].orderStatus == 5) {
                         if (brand in productBoughtBrand) {
                             productBoughtBrand[brand] += allOrders[index].numOfProd
 
@@ -128,11 +128,11 @@ const getProductBoughtByBrand = async (req, res, next) => {
 // @access admin
 // test roi
 // gap van de voi api phia tren la nhung truong hop san pham bi xoa roi nhung van tinh vao day con tren thi khong
-const getNumOrderSuccesMonth = async (req, res, next) => {
+const getNumOrderSuccesMonth = async (req, res, next) => {  
     try {
 
-        var d = new Date();
-        var currentYear = d.getFullYear();
+        var d = new Date()
+        var currentYear = d.getFullYear()
         var year = req.query.year || currentYear
         var orderSuccMonth = {}
 
@@ -145,12 +145,13 @@ const getNumOrderSuccesMonth = async (req, res, next) => {
                 $gte: new Date(`${year}-01-01`),
                 $lte: new Date(`${year}-12-31`),
             },
-            orderStatus: 6,
+            orderStatus: 5,
         })
 
         if (allOrders) {
             for (let index = 0; index < allOrders.length; index++) {
                 let monthIndex = allOrders[index].createdAt.getMonth()
+                console.log(allOrders[index].createdAt, allOrders[index].createdAt.getMonth())
                 orderSuccMonth[monthIndex + 1] += allOrders[index].numOfProd
             }
             return res.status(200).json(orderSuccMonth)
@@ -168,8 +169,8 @@ const getNumOrderSuccesMonth = async (req, res, next) => {
 const getRevenueMonth = async (req, res, next) => {
     try {
 
-        var d = new Date();
-        var currentYear = d.getFullYear();
+        var d = new Date()
+        var currentYear = d.getFullYear()
         var year = req.query.year || currentYear
         var revenueMonth = {}
 
@@ -182,10 +183,9 @@ const getRevenueMonth = async (req, res, next) => {
                 $gte: new Date(`${year}-01-01`),
                 $lte: new Date(`${year}-12-31`),
             },
-            orderStatus: 6,
+            orderStatus: 5,
         })
 
-        
         if (allOrders) {
             for (let index = 0; index < allOrders.length; index++) {
                 let monthIndex = allOrders[index].createdAt.getMonth()
@@ -208,8 +208,8 @@ const getRevenueMonth = async (req, res, next) => {
 const getNumRegisUser = async (req, res, next) => {
     try {
 
-        var d = new Date();
-        var currentYear = d.getFullYear();
+        var d = new Date()
+        var currentYear = d.getFullYear()
         var year = req.query.year || currentYear
         var regisUserMonth = {}
 
@@ -223,7 +223,6 @@ const getNumRegisUser = async (req, res, next) => {
                 $lte: new Date(`${year}-12-31`),
             },
         })
-
         
         if (allUsers) {
             for (let index = 0; index < allUsers.length; index++) {

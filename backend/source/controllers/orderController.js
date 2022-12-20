@@ -263,5 +263,33 @@ const destroyOrder = async (req, res, next) => {
     }
 }
 
+// @desc Confirm received order
+// @route PUT /api/order/:id/confirmReceived
+// @access private user
+// 
+// trạng thái đơn hàng
+// 0 - Đặt hàng thành công, 1 - đã tiếp nhận đơn hàng, 2 - Chuẩn bị hàng
+// 3 - Bàn giao vận chuyển, 4 - Đang vận chuyển, 5 - Giao hàng thành công 6 - Hủy đơn hàng
 
-export { orderProduct, getOrderById, getMyOrder, getOrder, updateOrder, destroyOrder }
+const confirmReceivedOrder = async (req, res, next) => {
+    try {
+        var idOrder = req.params.id
+        var order = await Order.findById(idOrder)
+        if (order) {
+            var orderAfterConfirm = await Order.findOneAndUpdate({ _id: idOrder }, { orderStatus: 5 }, { new: true })
+            if (orderAfterConfirm) {
+                return res.status(200).json(orderAfterConfirm)
+            } else {
+                return res.status(400).json("Not confirm received order")
+            }
+        } else {
+            return res.status(400).json("Not found order to confirm")
+        }
+
+    } catch (error) {
+        return res.status(400).json("Not confirm order")
+    }
+}
+
+
+export { orderProduct, getOrderById, getMyOrder, getOrder, updateOrder, destroyOrder, confirmReceivedOrder }

@@ -342,7 +342,7 @@ const updateProduct = async (req, res, next) => {
 // @desc review a product 
 // @route POST /api/product/review/:id
 // @access Private
-// check ddown hang da dc giao tuc da mua san pham thi moi dc nhan xet (chua lam)
+
 // test roi
 const reviewProduct = async (req, res, next) => {
     try {
